@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HAMZA | SIX EYES</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;900&family=Rajdhani:wght@400;600;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#00d4ff;--purple:#9b30ff;--red:#ff2244;--green:#00ff88;--gold:#ffcc00;
+  --bg:#04020a;--panel:#08040f;--panel2:#0d0620;--ink:#e8e0ff;--white:#ffffff;
+  --accent:#00d4ff;--accent2:#9b30ff;--sidebar-w:240px;--ticker-h:36px;
+}
+body.theme-jjk{--blue:#c084fc;--purple:#818cf8;--red:#38bdf8;--green:#e879f9;--gold:#f0abfc;--bg:#000010;--panel:#05000f;--panel2:#080018;--ink:#e0d4ff;--accent:#c084fc;--accent2:#818cf8;}
+body.theme-jjk::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 50%,rgba(120,40,200,0.18) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(150,80,255,0.03) 60px,rgba(150,80,255,0.03) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(150,80,255,0.03) 60px,rgba(150,80,255,0.03) 61px);pointer-events:none;z-index:0;animation:voidPulse 6s ease-in-out infinite;}
+body.theme-jjk .glitch-logo::before{color:#c084fc;}body.theme-jjk .glitch-logo::after{color:#818cf8;}
+body.theme-jjk #ticker{border-top-color:rgba(192,132,252,0.4);}body.theme-jjk .ticker-label{background:#c084fc;}
+body.theme-jjk .ticker-text span{color:#c084fc;}body.theme-jjk #domain-btn{border-color:#c084fc;color:#c084fc;}
+body.theme-jjk #domain-btn:hover{background:#c084fc;color:#000;}
+body.theme-op{--blue:#f97316;--purple:#ef4444;--red:#fbbf24;--green:#22d3ee;--gold:#fbbf24;--bg:#060e18;--panel:#0a1520;--panel2:#0d1c2a;--ink:#e0f0ff;--accent:#f97316;--accent2:#ef4444;}
+body.theme-op::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(0,80,160,0.25) 0%,transparent 60%),repeating-linear-gradient(180deg,transparent,transparent 80px,rgba(0,100,200,0.04) 80px,rgba(0,100,200,0.04) 81px);pointer-events:none;z-index:0;animation:seaWave 8s ease-in-out infinite;}
+@keyframes seaWave{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+body.theme-op .glitch-logo::before{color:#f97316;}body.theme-op .glitch-logo::after{color:#ef4444;}
+body.theme-op #ticker{border-top-color:rgba(249,115,22,0.4);}body.theme-op .ticker-label{background:#f97316;color:#000;}
+body.theme-op .ticker-text span{color:#f97316;}body.theme-op #domain-btn{border-color:#f97316;color:#f97316;}
+body.theme-op #domain-btn:hover{background:#f97316;color:#000;}
+body.theme-op .sidebar::before{content:'王下七武海';}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--ink);font-family:'Rajdhani',sans-serif;cursor:none;transition:background 0.8s,color 0.5s;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px);pointer-events:none;z-index:9998;}
+
+/* DOMAIN OVERLAY */
+#domain-overlay{position:fixed;inset:0;z-index:7500;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;}
+#domain-overlay.expand{animation:domainExpand 1.2s forwards;}
+@keyframes domainExpand{0%{opacity:0}15%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.domain-ring{position:absolute;border-radius:50%;border:3px solid var(--accent);animation:ringOut 1.2s ease-out forwards;}
+@keyframes ringOut{0%{width:0;height:0;opacity:1}100%{width:220vmax;height:220vmax;opacity:0}}
+.domain-text-wrap{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.domain-kanji{font-family:'Noto Sans JP',sans-serif;font-weight:900;font-size:clamp(3rem,12vw,7rem);color:transparent;-webkit-text-stroke:2px var(--accent);text-shadow:0 0 60px var(--accent);animation:domainKanji 1.2s forwards;}
+@keyframes domainKanji{0%{opacity:0;transform:scale(0.3)}30%{opacity:1;transform:scale(1.1)}70%{opacity:1;transform:scale(1)}100%{opacity:0}}
+.domain-title{font-family:'Bebas Neue';font-size:clamp(1.2rem,4vw,2.2rem);letter-spacing:8px;color:var(--accent);animation:domainKanji 1.2s 0.1s both;}
+.domain-sub{font-size:0.7rem;letter-spacing:4px;color:rgba(255,255,255,0.5);animation:domainKanji 1.2s 0.2s both;}
+
+/* THEME PICKER */
+#theme-picker{position:fixed;inset:0;z-index:7000;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;flex-direction:column;gap:28px;padding:20px;}
+#theme-picker.open{display:flex;animation:modalIn 0.3s ease;}
+.tp-title{font-family:'Bebas Neue';font-size:clamp(1.5rem,5vw,2.5rem);letter-spacing:6px;color:var(--white);text-align:center;}
+.tp-sub{font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.35);text-align:center;}
+.tp-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;width:100%;max-width:700px;}
+.tp-card{background:var(--panel);border:2px solid rgba(255,255,255,0.1);padding:28px 20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:12px;transition:all 0.25s;position:relative;overflow:hidden;}
+.tp-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;}
+.tp-card.jjk-card::before{background:radial-gradient(ellipse at center,rgba(192,132,252,0.15),transparent);}
+.tp-card.op-card::before{background:radial-gradient(ellipse at center,rgba(249,115,22,0.15),transparent);}
+.tp-card.def-card::before{background:radial-gradient(ellipse at center,rgba(0,212,255,0.15),transparent);}
+.tp-card:hover{transform:translateY(-4px);}
+.tp-card:hover::before{opacity:1;}
+.tp-card.jjk-card:hover{border-color:#c084fc;box-shadow:0 0 30px rgba(192,132,252,0.3);}
+.tp-card.op-card:hover{border-color:#f97316;box-shadow:0 0 30px rgba(249,115,22,0.3);}
+.tp-card.def-card:hover{border-color:#00d4ff;box-shadow:0 0 30px rgba(0,212,255,0.3);}
+.tp-card-icon{font-family:'Noto Sans JP',sans-serif;font-weight:900;font-size:3rem;line-height:1;}
+.tp-card-name{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:4px;color:var(--white);}
+.tp-card-desc{font-size:0.6rem;letter-spacing:2px;color:rgba(255,255,255,0.35);text-align:center;line-height:1.6;}
+.tp-card-badge{font-family:'Bebas Neue';font-size:0.55rem;letter-spacing:2px;padding:3px 10px;border-radius:1px;margin-top:4px;}
+.tp-close{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);font-family:'Bebas Neue';font-size:0.75rem;letter-spacing:3px;padding:8px 20px;cursor:pointer;transition:all 0.2s;}
+.tp-close:hover{border-color:var(--red);color:var(--red);}
+
+/* CURSOR */
+#cursor{position:fixed;width:18px;height:18px;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);}
+#cursor::before{content:'';position:absolute;inset:0;border:1.5px solid var(--blue);transform:rotate(45deg);transition:border-color 0.3s;}
+#cursor::after{content:'';position:absolute;top:50%;left:50%;width:4px;height:4px;background:var(--blue);transform:translate(-50%,-50%);border-radius:50%;transition:background 0.3s;}
+body:active #cursor::before{transform:rotate(45deg) scale(0.55);}
+.trail{position:fixed;pointer-events:none;z-index:99990;width:6px;height:6px;border:1px solid var(--blue);transform:rotate(45deg) translate(-50%,-50%);opacity:0;}
+@media(hover:none){#cursor,.trail{display:none;}body{cursor:auto;}}
+
+/* PARTICLES */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.particle{position:absolute;width:2px;height:2px;background:var(--blue);border-radius:50%;opacity:0;animation:particleFall linear infinite;}
+@keyframes particleFall{0%{opacity:0;transform:translateY(-10px)}10%{opacity:0.5}90%{opacity:0.15}100%{opacity:0;transform:translateY(100vh)}}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:#000;z-index:8000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+#splash.exit{animation:splashOut 0.5s ease-in forwards;}
+@keyframes splashOut{to{opacity:0;visibility:hidden;}}
+
+/* PIXEL ART CANVAS */
+#pixel-canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:0 auto;}
+
+.loading-bar-wrap{width:clamp(220px,60vw,340px);height:4px;background:#111;border:1px solid var(--blue);overflow:hidden;margin-top:18px;}
+.loading-bar-fill{height:100%;width:0;background:var(--blue);box-shadow:0 0 12px var(--blue);transition:width 0.05s linear;}
+.splash-sub{font-family:'Bebas Neue';font-size:clamp(0.7rem,2vw,0.9rem);letter-spacing:4px;color:var(--purple);margin-top:14px;opacity:0;animation:fadeIn 1s 0.8s both;}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* TOAST */
+#toast-container{position:fixed;top:16px;right:16px;z-index:9500;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:calc(100vw - 32px);}
+.toast{background:var(--panel);border:1px solid var(--blue);border-left:3px solid var(--blue);padding:10px 14px;min-width:240px;transform:translateX(120%);animation:toastIn 0.3s forwards;font-family:'Bebas Neue';}
+.toast.out{animation:toastOut 0.3s forwards;}
+.toast-title{font-size:0.58rem;letter-spacing:3px;color:var(--blue);margin-bottom:2px;}
+.toast-msg{font-size:0.95rem;letter-spacing:2px;color:var(--white);}
+@keyframes toastIn{to{transform:translateX(0);}}
+@keyframes toastOut{to{transform:translateX(120%);opacity:0;}}
+
+/* TICKER */
+#ticker{position:fixed;bottom:0;left:0;right:0;height:var(--ticker-h);background:rgba(0,0,0,0.97);border-top:1px solid rgba(0,212,255,0.4);z-index:1000;overflow:hidden;display:flex;align-items:center;transition:border-color 0.5s;}
+.ticker-label{font-family:'Bebas Neue';font-size:0.65rem;letter-spacing:3px;color:#000;background:var(--blue);padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;transition:background 0.5s;}
+.ticker-inner{overflow:hidden;flex:1;}
+.ticker-track{display:flex;animation:tickerScroll 30s linear infinite;white-space:nowrap;}
+.ticker-text{font-family:'Bebas Neue';font-size:0.7rem;letter-spacing:3px;color:rgba(255,255,255,0.5);padding:0 40px;}
+.ticker-text span{color:var(--blue);transition:color 0.5s;}
+@keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;height:100vh;padding-bottom:var(--ticker-h);position:relative;z-index:2;}
+
+/* SIDEBAR */
+.sidebar{background:var(--panel);border-right:2px solid rgba(0,212,255,0.35);padding:20px 14px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;transition:transform 0.3s ease,background 0.5s,border-color 0.5s;}
+.sidebar::before{content:'六眼';font-family:'Noto Sans JP',sans-serif;font-weight:900;font-size:7rem;color:rgba(0,212,255,0.035);position:absolute;bottom:-5px;left:-8px;line-height:1;pointer-events:none;user-select:none;transition:color 0.5s;}
+.glitch-logo{font-family:'Bebas Neue';font-size:clamp(1.8rem,3.5vw,2.4rem);letter-spacing:3px;color:var(--white);line-height:1;margin-bottom:3px;position:relative;display:inline-block;}
+.glitch-logo::before,.glitch-logo::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;}
+.glitch-logo::before{color:var(--blue);animation:glitch1 5s infinite;clip-path:polygon(0 0,100% 0,100% 45%,0 45%);}
+.glitch-logo::after{color:var(--red);animation:glitch2 5s infinite;clip-path:polygon(0 55%,100% 55%,100% 100%,0 100%);}
+@keyframes glitch1{0%,88%,100%{transform:none;opacity:0}90%{transform:translateX(-3px);opacity:1}92%{transform:translateX(3px);opacity:1}94%{transform:none;opacity:0}}
+@keyframes glitch2{0%,88%,100%{transform:none;opacity:0}91%{transform:translateX(3px);opacity:1}93%{transform:translateX(-3px);opacity:1}95%{transform:none;opacity:0}}
+.sidebar-sub{font-size:0.65rem;letter-spacing:4px;color:var(--blue);margin-bottom:22px;text-transform:uppercase;transition:color 0.5s;}
+.divider{height:1px;background:linear-gradient(90deg,var(--blue),transparent);margin-bottom:20px;transition:background 0.5s;}
+.nav-label{font-size:0.6rem;letter-spacing:3px;color:rgba(255,255,255,0.25);margin-bottom:8px;text-transform:uppercase;}
+.nav-btn{display:flex;align-items:center;gap:10px;background:transparent;border:none;color:rgba(255,255,255,0.45);padding:11px 10px;cursor:pointer;font-family:'Bebas Neue';font-size:1.05rem;letter-spacing:2px;width:100%;text-align:left;border-left:2px solid transparent;transition:all 0.2s;margin-bottom:3px;-webkit-tap-highlight-color:transparent;}
+.nav-btn .nav-icon{font-size:0.7rem;font-family:'Noto Sans JP',sans-serif;color:var(--blue);opacity:0;transition:0.2s;}
+.nav-btn:hover,.nav-btn.active{color:var(--white);border-left-color:var(--blue);background:rgba(0,212,255,0.05);}
+.nav-btn:hover .nav-icon,.nav-btn.active .nav-icon{opacity:1;}
+.nav-btn.active{color:var(--blue);}
+.wanted{border:2px solid rgba(255,204,0,0.35);padding:10px;margin-top:8px;background:rgba(255,204,0,0.03);text-align:center;flex-shrink:0;}
+.wanted-title{font-family:'Bebas Neue';font-size:0.55rem;letter-spacing:5px;color:rgba(255,204,0,0.6);margin-bottom:5px;}
+.wanted-name{font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:3px;color:var(--gold);line-height:1;}
+.wanted-grade{font-size:0.55rem;letter-spacing:2px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.wanted-bounty{font-family:'Bebas Neue';font-size:0.8rem;color:var(--gold);margin-top:5px;letter-spacing:1px;}
+.sidebar-bottom{margin-top:auto;padding-top:14px;}
+.power-label{font-size:0.58rem;letter-spacing:3px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:6px;}
+.power-bars{display:flex;gap:3px;}
+.power-bar{flex:1;height:5px;background:var(--blue);opacity:0;transition:opacity 0.3s,background 0.5s;}
+.power-bar.on{opacity:1;}
+.power-bar.dim{opacity:0.2;}
+
+/* HAMBURGER */
+#hamburger{display:none;position:fixed;top:10px;left:10px;z-index:9000;background:var(--panel);border:1.5px solid var(--blue);width:42px;height:42px;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer !important;padding:8px;-webkit-tap-highlight-color:transparent;}
+#hamburger span{display:block;width:22px;height:2px;background:var(--blue);transition:all 0.25s;border-radius:1px;}
+#hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+#hamburger.open span:nth-child(2){opacity:0;}
+#hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2500;}
+#sidebar-overlay.show{display:block;}
+
+/* MAIN */
+.main{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--blue) transparent;padding:18px;background:var(--bg);transition:background 0.8s;}
+.main::-webkit-scrollbar{width:4px;}
+.main::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px;}
+
+/* PAGE SWITCHING — FIXED: no glitch, clean visibility toggle */
+.page{display:none;animation:pageIn 0.25s ease;}
+.page.active{display:block;}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* HOME */
+.technique-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;margin-top:2px;}
+.flip-card{height:130px;perspective:800px;cursor:pointer;}
+.flip-inner{width:100%;height:100%;transform-style:preserve-3d;transition:transform 0.5s ease;position:relative;}
+.flip-card:hover .flip-inner,.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(0,212,255,0.3);padding:10px;}
+.flip-front{background:var(--panel);}
+.flip-back{background:#0a0015;border-color:var(--purple);transform:rotateY(180deg);}
+.flip-icon{font-family:'Noto Sans JP',sans-serif;font-size:1.9rem;color:var(--blue);margin-bottom:5px;}
+.flip-name{font-family:'Bebas Neue';font-size:0.82rem;letter-spacing:2px;color:var(--white);text-align:center;}
+.flip-back-name{font-family:'Bebas Neue';font-size:0.82rem;letter-spacing:2px;color:var(--blue);margin-bottom:5px;}
+.flip-desc{font-size:0.6rem;letter-spacing:1px;color:rgba(255,255,255,0.45);text-align:center;line-height:1.5;}
+.flip-power{font-family:'Bebas Neue';font-size:1.3rem;color:var(--purple);margin-top:4px;}
+.manga-grid{display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:190px 190px;gap:4px;margin-bottom:4px;}
+.panel{position:relative;overflow:hidden;background:#000;border:2px solid rgba(255,255,255,0.12);}
+.panel-main{grid-row:span 2;}
+.panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:contrast(1.1) saturate(1.2);transition:transform 0.6s ease;}
+.panel:hover img{transform:scale(1.04);}
+.panel-main::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(0,212,255,0.025) 40px,rgba(0,212,255,0.025) 42px);pointer-events:none;z-index:1;}
+.panel-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.9));padding:36px 14px 12px;z-index:2;}
+.panel-title{font-family:'Bebas Neue';font-size:clamp(1.6rem,4vw,2.6rem);letter-spacing:4px;line-height:1;color:var(--white);text-shadow:2px 2px 0 var(--blue);}
+.panel-sub{font-family:'Noto Sans JP',sans-serif;font-size:0.6rem;color:var(--blue);letter-spacing:2px;}
+.side-panel .panel-caption{padding:18px 10px 8px;}
+.side-panel .panel-title{font-size:1.4rem;}
+.panel-cut{position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 28px 28px 0;border-color:transparent var(--bg) transparent transparent;z-index:3;}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:4px;}
+.stat-box{background:var(--panel);border:1px solid rgba(0,212,255,0.2);padding:10px 12px;position:relative;overflow:hidden;transition:background 0.5s,border-color 0.5s;}
+.stat-box::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--blue);}
+.stat-val{font-family:'Bebas Neue';font-size:clamp(1.3rem,3vw,1.8rem);color:var(--blue);line-height:1;transition:color 0.5s;}
+.stat-lbl{font-size:0.58rem;letter-spacing:2px;color:rgba(255,255,255,0.35);text-transform:uppercase;}
+.speech-bubble{background:var(--white);color:#000;font-family:'Bebas Neue';font-size:1rem;letter-spacing:1px;padding:10px 15px;border-radius:4px;position:relative;display:inline-block;margin-top:4px;margin-left:4px;min-height:36px;max-width:100%;}
+.speech-bubble::before{content:'';position:absolute;left:18px;top:-10px;border:5px solid transparent;border-bottom-color:var(--white);}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.page-num{font-family:'Bebas Neue';font-size:3.5rem;color:rgba(0,212,255,0.12);line-height:1;}
+.page-name{font-family:'Bebas Neue';font-size:1rem;letter-spacing:4px;color:rgba(255,255,255,0.35);}
+
+/* GAMING */
+.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.game-card{position:relative;height:180px;overflow:hidden;border:2px solid rgba(255,34,68,0.3);}
+.game-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.3) contrast(1.1);transition:transform 0.5s;}
+.game-card:hover img{transform:scale(1.05);}
+.game-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 60%);z-index:1;}
+.game-card-info{position:absolute;bottom:12px;left:12px;z-index:2;}
+.game-card-name{font-family:'Bebas Neue';font-size:1.6rem;color:var(--white);letter-spacing:3px;line-height:1;}
+.game-card-tag{font-size:0.58rem;letter-spacing:3px;color:var(--red);}
+.game-rank{position:absolute;top:10px;right:10px;font-family:'Bebas Neue';font-size:0.7rem;letter-spacing:2px;background:var(--red);color:#fff;padding:3px 7px;z-index:2;}
+.arcade-section{margin-top:8px;margin-bottom:8px;}
+.arcade-label{font-family:'Bebas Neue';font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.25);margin-bottom:10px;}
+.arcade-row{display:flex;gap:8px;}
+.arcade-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--panel);border:2px solid rgba(255,34,68,0.3);padding:14px 8px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.arcade-btn:hover{border-color:var(--red);box-shadow:0 0 18px rgba(255,34,68,0.2);transform:translateY(-2px);}
+.arcade-btn-icon{font-size:1.8rem;line-height:1;}
+.arcade-btn-name{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--white);}
+.arcade-btn-sub{font-size:0.58rem;letter-spacing:2px;color:var(--red);}
+.arcade-btn-badge{position:absolute;top:7px;right:7px;font-family:'Bebas Neue';font-size:0.55rem;letter-spacing:1px;background:var(--red);color:#fff;padding:2px 5px;}
+
+/* DEVIL FRUITS SECTION */
+.df-section{margin-top:14px;margin-bottom:8px;}
+.df-section-title{font-family:'Bebas Neue';font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.25);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.df-section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(0,212,255,0.3),transparent);}
+.df-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+.df-card{background:var(--panel);border:1px solid rgba(0,212,255,0.15);padding:0;overflow:hidden;cursor:pointer;transition:all 0.25s;position:relative;}
+.df-card:hover{border-color:var(--blue);transform:translateY(-3px);box-shadow:0 0 20px rgba(0,212,255,0.18);}
+.df-img-wrap{position:relative;width:100%;aspect-ratio:1;overflow:hidden;background:#000;}
+.df-img-wrap img{width:100%;height:100%;object-fit:cover;filter:saturate(1.4) contrast(1.1);transition:transform 0.4s;}
+.df-card:hover .df-img-wrap img{transform:scale(1.1);}
+.df-type-badge{position:absolute;top:4px;left:4px;font-family:'Bebas Neue';font-size:0.48rem;letter-spacing:1px;padding:2px 5px;z-index:2;}
+.df-type-paramecia{background:rgba(0,212,255,0.85);color:#000;}
+.df-type-logia{background:rgba(255,204,0,0.9);color:#000;}
+.df-type-zoan{background:rgba(255,34,68,0.85);color:#fff;}
+.df-info{padding:6px 7px 8px;}
+.df-fruit-name{font-family:'Bebas Neue';font-size:0.75rem;letter-spacing:1.5px;color:var(--blue);line-height:1;margin-bottom:2px;}
+.df-user{font-size:0.52rem;letter-spacing:1px;color:rgba(255,255,255,0.5);line-height:1.3;}
+.df-power{font-family:'Bebas Neue';font-size:0.55rem;letter-spacing:1px;color:rgba(255,255,255,0.25);margin-top:2px;}
+.df-overlay-modal{position:fixed;inset:0;z-index:6500;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;padding:20px;}
+.df-overlay-modal.open{display:flex;animation:modalIn 0.25s ease;}
+.df-detail-box{background:var(--panel);border:2px solid var(--blue);max-width:440px;width:100%;position:relative;overflow:hidden;}
+.df-detail-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));}
+.df-detail-img{width:100%;height:200px;object-fit:cover;filter:saturate(1.3);}
+.df-detail-body{padding:18px 20px;}
+.df-detail-name{font-family:'Bebas Neue';font-size:2rem;letter-spacing:4px;color:var(--blue);line-height:1;}
+.df-detail-type{font-size:0.58rem;letter-spacing:3px;color:rgba(255,255,255,0.3);margin-bottom:10px;}
+.df-detail-user-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.df-detail-username{font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;color:var(--white);}
+.df-detail-desc{font-size:0.75rem;letter-spacing:0.5px;color:rgba(255,255,255,0.45);line-height:1.6;}
+.df-close-btn{position:absolute;top:12px;right:12px;background:transparent;border:1px solid rgba(255,34,68,0.5);color:var(--red);font-family:'Bebas Neue';font-size:0.7rem;letter-spacing:2px;padding:4px 10px;cursor:pointer;transition:all 0.2s;z-index:2;}
+.df-close-btn:hover{background:var(--red);color:#fff;}
+
+/* GAME MODAL */
+#game-modal{position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.96);display:none;flex-direction:column;align-items:center;justify-content:center;padding:10px;}
+#game-modal.open{display:flex;animation:modalIn 0.25s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-top-bar{width:100%;max-width:620px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;flex-wrap:wrap;}
+.game-selector{display:flex;border:1px solid rgba(0,212,255,0.3);overflow:hidden;}
+.game-sel-btn{background:transparent;border:none;color:rgba(255,255,255,0.35);font-family:'Bebas Neue';font-size:0.8rem;letter-spacing:2px;padding:7px 12px;cursor:pointer;transition:all 0.2s;border-right:1px solid rgba(0,212,255,0.2);}
+.game-sel-btn:last-child{border-right:none;}
+.game-sel-btn.sel{background:rgba(0,212,255,0.1);color:var(--blue);}
+.modal-close{background:transparent;border:1px solid rgba(255,34,68,0.5);color:var(--red);font-family:'Bebas Neue';font-size:0.75rem;letter-spacing:2px;padding:6px 12px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.modal-close:hover{background:var(--red);color:#fff;}
+.modal-header{width:100%;max-width:620px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.modal-title{font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:4px;color:var(--blue);}
+.modal-score{font-family:'Bebas Neue';font-size:0.9rem;letter-spacing:3px;color:rgba(255,255,255,0.4);}
+.modal-canvas-wrap{border:2px solid var(--blue);position:relative;max-width:100%;}
+#game-canvas{display:block;max-width:100%;height:auto;}
+.modal-controls{width:100%;max-width:620px;display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.modal-hint{font-family:'Bebas Neue';font-size:0.7rem;letter-spacing:3px;color:rgba(255,255,255,0.25);}
+.modal-restart{background:transparent;border:1px solid var(--blue);color:var(--blue);font-family:'Bebas Neue';font-size:0.75rem;letter-spacing:2px;padding:6px 14px;cursor:pointer;transition:all 0.2s;}
+.modal-restart:hover{background:var(--blue);color:#000;}
+
+/* FITNESS */
+.fit-hero{position:relative;height:220px;overflow:hidden;border:2px solid rgba(0,212,255,0.3);margin-bottom:12px;}
+.fit-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:contrast(1.2) saturate(0.8) brightness(0.65);}
+.fit-hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0.75) 0%,rgba(0,212,255,0.06) 100%);z-index:1;}
+.fit-hero-title{position:absolute;bottom:18px;left:18px;z-index:2;}
+.fit-hero-title .big{font-family:'Bebas Neue';font-size:clamp(2.2rem,6vw,3.5rem);letter-spacing:6px;color:var(--white);line-height:1;}
+.fit-hero-title .big span{color:var(--blue);}
+.fit-hero-title .sub{font-size:0.62rem;letter-spacing:4px;color:rgba(255,255,255,0.45);}
+.fit-hero-badges{position:absolute;top:14px;right:14px;z-index:2;display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+.fit-badge{font-family:'Bebas Neue';font-size:0.58rem;letter-spacing:2px;padding:4px 10px;border:1px solid;display:inline-block;}
+.fit-badge-fire{color:var(--blue);border-color:var(--blue);background:rgba(0,212,255,0.1);}
+.fit-badge-day{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.08);}
+.muscle-map-section{margin-bottom:12px;}
+.muscle-map-label{font-family:'Bebas Neue';font-size:0.65rem;letter-spacing:4px;color:rgba(255,255,255,0.25);margin-bottom:8px;}
+.muscle-map-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
+.muscle-chip{background:var(--panel);border:1px solid rgba(255,255,255,0.07);padding:7px 4px;text-align:center;position:relative;overflow:hidden;transition:all 0.2s;}
+.muscle-chip::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease;}
+.muscle-chip.active::before{transform:scaleX(1);}
+.muscle-chip.active{border-color:rgba(0,212,255,0.35);}
+.muscle-chip-icon{font-size:1.1rem;display:block;margin-bottom:2px;}
+.muscle-chip-name{font-family:'Bebas Neue';font-size:0.55rem;letter-spacing:1px;color:rgba(255,255,255,0.4);display:block;}
+.muscle-chip.active .muscle-chip-name{color:var(--blue);}
+.week-grid-section{margin-bottom:12px;}
+.week-cell{aspect-ratio:1;border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:0.6rem;letter-spacing:1px;color:rgba(255,255,255,0.2);position:relative;overflow:hidden;cursor:pointer;transition:all 0.2s;}
+.week-cell.today{border-color:var(--blue);color:var(--blue);}
+.week-cell.done{background:rgba(0,255,136,0.12);border-color:rgba(0,255,136,0.4);color:var(--green);}
+.week-cell.done::after{content:'✓';position:absolute;font-size:1.2rem;opacity:0.3;}
+.week-cell:hover{border-color:rgba(0,212,255,0.3);}
+.day-selector{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;}
+.day-tab{background:var(--panel);border:1px solid rgba(0,212,255,0.2);color:rgba(255,255,255,0.35);font-family:'Bebas Neue';font-size:0.75rem;letter-spacing:2px;padding:7px 12px;cursor:pointer;transition:all 0.2s;flex:1;text-align:center;min-width:60px;}
+.day-tab:hover{border-color:var(--blue);color:var(--white);}
+.day-tab.active{background:rgba(0,212,255,0.1);border-color:var(--blue);color:var(--blue);}
+.workout-panel{background:var(--panel);border:2px solid rgba(0,212,255,0.25);position:relative;overflow:hidden;transition:background 0.5s;}
+.workout-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));}
+.workout-header{padding:12px 16px 10px;border-bottom:1px solid rgba(0,212,255,0.12);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.workout-day-name{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:3px;color:var(--blue);}
+.workout-day-focus{font-size:0.58rem;letter-spacing:3px;color:rgba(255,255,255,0.3);margin-top:2px;}
+.workout-complete-btn{background:transparent;border:1px solid var(--blue);color:var(--blue);font-family:'Bebas Neue';font-size:0.7rem;letter-spacing:2px;padding:5px 12px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.workout-complete-btn:hover,.workout-complete-btn.done{background:var(--blue);color:#000;}
+.exercise-list{padding:12px 16px;}
+.ex-item{margin-bottom:16px;position:relative;}
+.ex-item:last-child{margin-bottom:0;}
+.ex-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:6px;}
+.ex-name{font-family:'Bebas Neue';font-size:1.05rem;letter-spacing:1.5px;color:var(--white);flex:1;}
+.ex-meta{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.ex-sets-badge{font-size:0.58rem;letter-spacing:2px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);padding:2px 7px;border:1px solid rgba(255,255,255,0.08);}
+.ex-check{width:20px;height:20px;border:1.5px solid rgba(0,212,255,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+.ex-check:hover{border-color:var(--blue);background:rgba(0,212,255,0.1);}
+.ex-check.checked{border-color:var(--green);background:rgba(0,255,136,0.12);}
+.ex-check.checked::after{content:'✓';font-size:0.7rem;color:var(--green);}
+.ex-progress-wrap{height:3px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+.ex-progress-fill{height:100%;border-radius:2px;transition:width 0.7s cubic-bezier(0.23,1,0.32,1);}
+.ex-detail{font-size:0.62rem;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-top:3px;display:flex;gap:12px;flex-wrap:wrap;}
+.ex-tag{font-family:'Bebas Neue';font-size:0.55rem;letter-spacing:1px;padding:1px 6px;border:1px solid;}
+.ex-tag-hyp{color:#818cf8;border-color:rgba(129,140,248,0.4);}
+.ex-tag-str{color:#f97316;border-color:rgba(249,115,22,0.4);}
+.ex-tag-end{color:#22d3ee;border-color:rgba(34,211,238,0.4);}
+.set-tracker{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.set-dot{width:30px;height:30px;border:1.5px solid rgba(0,212,255,0.28);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:0.58rem;color:rgba(255,255,255,0.28);cursor:pointer;transition:all 0.2s;}
+.set-dot:hover{border-color:var(--blue);color:var(--blue);}
+.set-dot.done{border-color:var(--green);background:rgba(0,255,136,0.12);color:var(--green);}
+.set-dot.active-set{border-color:var(--blue);background:rgba(0,212,255,0.08);color:var(--blue);animation:pulseDot 1s ease-in-out infinite;}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,0.4)}50%{box-shadow:0 0 0 5px rgba(0,212,255,0)}}
+.ex-volume-row{display:flex;gap:3px;margin-top:5px;align-items:flex-end;height:18px;}
+.vol-bar{width:8px;border-radius:1px;background:var(--blue);opacity:0.5;transition:all 0.4s;flex-shrink:0;}
+.vol-bar.done-bar{opacity:1;box-shadow:0 0 4px var(--blue);}
+.rest-timer{background:rgba(0,0,0,0.5);border:1px solid rgba(0,212,255,0.3);padding:12px 16px;margin-top:8px;display:none;align-items:center;justify-content:space-between;gap:10px;}
+.rest-timer.show{display:flex;}
+.rest-label{font-family:'Bebas Neue';font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.35);}
+.rest-countdown{font-family:'Bebas Neue';font-size:2rem;color:var(--blue);letter-spacing:2px;line-height:1;}
+.rest-bar{flex:1;height:4px;background:rgba(0,212,255,0.12);border-radius:2px;overflow:hidden;}
+.rest-bar-fill{height:100%;background:var(--blue);border-radius:2px;transition:width 1s linear;}
+.rest-skip{font-family:'Bebas Neue';font-size:0.65rem;letter-spacing:2px;color:rgba(255,255,255,0.28);cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:transparent;padding:3px 9px;transition:all 0.2s;}
+.rest-skip:hover{color:var(--white);border-color:rgba(255,255,255,0.4);}
+.global-progress{background:var(--panel);border:1px solid rgba(0,212,255,0.18);padding:12px 16px;margin-bottom:10px;transition:background 0.5s;}
+.gp-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.gp-title{font-family:'Bebas Neue';font-size:0.8rem;letter-spacing:3px;color:rgba(255,255,255,0.35);}
+.gp-percent{font-family:'Bebas Neue';font-size:2rem;color:var(--blue);line-height:1;}
+.gp-bar-wrap{height:6px;background:rgba(0,212,255,0.08);border-radius:3px;overflow:hidden;}
+.gp-bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:3px;transition:width 0.6s ease;}
+.gp-stats{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;}
+.gp-stat{font-size:0.62rem;letter-spacing:2px;color:rgba(255,255,255,0.3);}
+.gp-stat span{color:var(--blue);font-family:'Bebas Neue';font-size:0.88rem;}
+.fit-micro-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.micro-stat{background:var(--panel2);border:1px solid rgba(255,255,255,0.06);padding:10px 10px;text-align:center;position:relative;overflow:hidden;}
+.micro-stat-val{font-family:'Bebas Neue';font-size:1.5rem;color:var(--blue);line-height:1;transition:color 0.5s;}
+.micro-stat-lbl{font-size:0.52rem;letter-spacing:2px;color:rgba(255,255,255,0.28);margin-top:2px;text-transform:uppercase;}
+.micro-stat-icon{font-size:0.8rem;position:absolute;top:6px;right:7px;opacity:0.25;}
+
+/* DOMAIN BTN */
+#domain-btn{position:fixed;bottom:calc(var(--ticker-h) + 10px);right:16px;background:transparent;border:2px solid var(--red);color:var(--red);font-family:'Bebas Neue';font-size:0.9rem;letter-spacing:3px;padding:10px 16px;cursor:pointer;z-index:1000;transition:all 0.3s;}
+#domain-btn:hover{background:var(--red);color:var(--white);}
+@keyframes voidPulse{0%,100%{opacity:1}50%{opacity:0.6}}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  :root{--sidebar-w:200px;}
+  .technique-row{grid-template-columns:repeat(2,1fr);}
+  .manga-grid{grid-template-rows:160px 160px;}
+  .game-grid{grid-template-columns:1fr;}
+  .arcade-row{flex-wrap:wrap;}
+  .muscle-map-grid{grid-template-columns:repeat(4,1fr);}
+  .fit-micro-stats{grid-template-columns:repeat(2,1fr);}
+  .df-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media(max-width:640px){
+  :root{--sidebar-w:230px;}
+  body{overflow-x:hidden;}html,body{overflow:hidden;}
+  #hamburger{display:flex !important;}
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:fixed;top:0;left:0;bottom:var(--ticker-h);width:var(--sidebar-w);z-index:2600;transform:translateX(-100%);overflow-y:auto;}
+  .sidebar.mobile-open{transform:translateX(0);}
+  .main{padding:14px;padding-top:56px;}
+  .technique-row{grid-template-columns:repeat(2,1fr);}
+  .flip-card{height:110px;}
+  .manga-grid{grid-template-columns:1fr;grid-template-rows:180px 130px 130px;}
+  .panel-main{grid-row:span 1;}
+  .stat-row{grid-template-columns:repeat(2,1fr);}
+  .game-grid{grid-template-columns:1fr;}
+  .arcade-row{flex-direction:column;}
+  #domain-btn{right:10px;font-size:0.75rem;padding:8px 12px;}
+  #game-modal{padding:8px;}
+  #game-canvas{width:100% !important;height:auto !important;}
+  .gp-stats{gap:12px;}
+  .muscle-map-grid{grid-template-columns:repeat(3,1fr);}
+  .fit-micro-stats{grid-template-columns:repeat(2,1fr);}
+  .df-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:380px){
+  .technique-row{grid-template-columns:repeat(2,1fr);}
+  .flip-card{height:95px;}
+  .flip-icon{font-size:1.5rem;}
+  .df-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="particles"></div>
+<div id="toast-container"></div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- DOMAIN EXPANSION OVERLAY -->
+<div id="domain-overlay">
+  <div class="domain-ring" id="d-ring1"></div>
+  <div class="domain-ring" id="d-ring2" style="animation-delay:0.15s"></div>
+  <div class="domain-ring" id="d-ring3" style="animation-delay:0.3s"></div>
+  <div class="domain-text-wrap">
+    <div class="domain-kanji" id="domain-kanji">領域展開</div>
+    <div class="domain-title" id="domain-title">UNLIMITED VOID</div>
+    <div class="domain-sub" id="domain-sub">無量空処</div>
+  </div>
+</div>
+
+<!-- THEME PICKER -->
+<div id="theme-picker">
+  <div class="tp-title">⬡ SELECT YOUR DOMAIN</div>
+  <div class="tp-sub">// CHOOSE YOUR CURSED TECHNIQUE</div>
+  <div class="tp-cards">
+    <div class="tp-card def-card" onclick="applyTheme('default')">
+      <div class="tp-card-icon" style="color:#00d4ff;">∞</div>
+      <div class="tp-card-name" style="color:#00d4ff;">SIX EYES</div>
+      <div class="tp-card-desc">DEFAULT THEME<br>LIMITLESS CURSED ENERGY<br>GOJO SATORU MODE</div>
+      <div class="tp-card-badge" style="background:rgba(0,212,255,0.12);color:#00d4ff;border:1px solid rgba(0,212,255,0.3);">ACTIVE BY DEFAULT</div>
+    </div>
+    <div class="tp-card jjk-card" onclick="applyTheme('jjk')">
+      <div class="tp-card-icon" style="color:#c084fc;">無量空処</div>
+      <div class="tp-card-name" style="color:#c084fc;">UNLIMITED VOID</div>
+      <div class="tp-card-desc">JJK DOMAIN EXPANSION<br>INFINITE INFORMATION<br>PURPLE / COSMIC THEME</div>
+      <div class="tp-card-badge" style="background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.3);">SPECIAL GRADE</div>
+    </div>
+    <div class="tp-card op-card" onclick="applyTheme('op')">
+      <div class="tp-card-icon" style="color:#f97316;">⚓</div>
+      <div class="tp-card-name" style="color:#f97316;">SEA KING</div>
+      <div class="tp-card-desc">ONE PIECE THEME<br>WILL OF D. AWAKENED<br>OCEAN / FIRE THEME</div>
+      <div class="tp-card-badge" style="background:rgba(249,115,22,0.12);color:#f97316;border:1px solid rgba(249,115,22,0.3);">YONKO CLASS</div>
+    </div>
+  </div>
+  <button class="tp-close" onclick="closePicker()">✕ CANCEL</button>
+</div>
+
+<!-- HAMBURGER -->
+<button id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div style="text-align:center;margin-bottom:16px;">
+    <canvas id="pixel-canvas" width="192" height="192" style="width:192px;height:192px;"></canvas>
+  </div>
+  <div style="font-family:'Bebas Neue';font-size:clamp(1.5rem,5vw,2.5rem);letter-spacing:12px;color:#fff;opacity:0;animation:sixEyesBig 0.5s 0.9s forwards;">SIX EYES</div>
+  <div style="font-family:'Bebas Neue';font-size:clamp(0.6rem,2vw,0.8rem);letter-spacing:6px;color:#9b30ff;opacity:0;animation:fadeIn 0.5s 1.3s forwards;margin-top:8px;">HAMZA · SPECIAL GRADE · LIMITLESS</div>
+  <div class="loading-bar-wrap"><div class="loading-bar-fill" id="load-bar"></div></div>
+  <p class="splash-sub">INITIALIZING CURSED ENERGY RECOGNITION</p>
+</div>
+<style>
+@keyframes sixEyesBig{0%{opacity:0;transform:scale(0.4)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+</style>
+
+<!-- TICKER -->
+<div id="ticker">
+  <div class="ticker-label">// LIVE</div>
+  <div class="ticker-inner">
+    <div class="ticker-track">
+      <span class="ticker-text">SPECIAL GRADE SORCERER DETECTED &nbsp;<span>// CURSED ENERGY: MAXIMUM //</span>&nbsp; SIX EYES ONLINE &nbsp;<span>// INFINITY ACTIVE //</span>&nbsp; HAMZA.SYS BOOT COMPLETE &nbsp;<span>// DOMAIN READY //</span>&nbsp; ALL RIVALS ELIMINATED &nbsp;<span>// PEAK FORM //</span>&nbsp;</span>
+      <span class="ticker-text">SPECIAL GRADE SORCERER DETECTED &nbsp;<span>// CURSED ENERGY: MAXIMUM //</span>&nbsp; SIX EYES ONLINE &nbsp;<span>// INFINITY ACTIVE //</span>&nbsp; HAMZA.SYS BOOT COMPLETE &nbsp;<span>// DOMAIN READY //</span>&nbsp; ALL RIVALS ELIMINATED &nbsp;<span>// PEAK FORM //</span>&nbsp;</span>
+    </div>
+  </div>
+</div>
+
+<!-- GAME MODAL -->
+<div id="game-modal">
+  <div class="modal-top-bar">
+    <div class="game-selector">
+      <button class="game-sel-btn sel" id="sel-flappy" onclick="switchGame('flappy')">🐦 FLAPPY</button>
+      <button class="game-sel-btn" id="sel-snake" onclick="switchGame('snake')">🐍 SNAKE</button>
+      <button class="game-sel-btn" id="sel-pong" onclick="switchGame('pong')">🏓 PONG</button>
+    </div>
+    <button class="modal-close" onclick="closeGame()">✕ EXIT</button>
+  </div>
+  <div class="modal-header">
+    <div class="modal-title" id="modal-title">FLAPPY SORCERER</div>
+    <div class="modal-score">SCORE: <span id="modal-score" style="color:var(--blue);font-size:1.2rem;">0</span> &nbsp;|&nbsp; BEST: <span id="modal-best" style="color:var(--purple);">0</span></div>
+  </div>
+  <div class="modal-canvas-wrap">
+    <canvas id="game-canvas" width="600" height="360"></canvas>
+  </div>
+  <div class="modal-controls">
+    <div class="modal-hint" id="modal-hint">PRESS SPACE / TAP TO FLAP</div>
+    <button class="modal-restart" onclick="restartGame()">↺ RESTART</button>
+  </div>
+</div>
+
+<!-- DEVIL FRUIT DETAIL MODAL -->
+<div class="df-overlay-modal" id="df-modal">
+  <div class="df-detail-box">
+    <button class="df-close-btn" onclick="closeDFModal()">✕ CLOSE</button>
+    <img id="df-modal-img" src="" alt="" class="df-detail-img">
+    <div class="df-detail-body">
+      <div class="df-detail-name" id="df-modal-name"></div>
+      <div class="df-detail-type" id="df-modal-type"></div>
+      <div class="df-detail-user-row">
+        <div class="df-detail-username" id="df-modal-user"></div>
+      </div>
+      <div class="df-detail-desc" id="df-modal-desc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="glitch-logo" data-text="HAMZA">HAMZA</div>
+    <div class="sidebar-sub" id="sidebar-sub">SIX EYES SYSTEM</div>
+    <div class="divider"></div>
+    <p class="nav-label">// Navigation</p>
+    <button class="nav-btn active" onclick="show('home',this)"><span class="nav-icon">霊</span>SPIRIT CORE</button>
+    <button class="nav-btn" onclick="show('gaming',this)"><span class="nav-icon">戦</span>TURBO COMBAT</button>
+    <button class="nav-btn" onclick="show('fitness',this)"><span class="nav-icon">力</span>PEAK POWER</button>
+    <div class="wanted" style="margin-top:auto;flex-shrink:0;">
+      <div class="wanted-title" id="wanted-title">⚠ SORCERER FILE ⚠</div>
+      <div class="wanted-name">HAMZA</div>
+      <div class="wanted-grade" id="wanted-grade">SPECIAL GRADE — SIX EYES</div>
+      <div style="height:1px;background:rgba(255,204,0,0.18);margin:7px 0;"></div>
+      <div class="wanted-bounty" id="wanted-bounty">CURSED ENERGY: ∞ PTS</div>
+    </div>
+    <div class="sidebar-bottom">
+      <p class="power-label">// Cursed Energy</p>
+      <div class="power-bars" id="power-bars">
+        <div class="power-bar"></div><div class="power-bar"></div><div class="power-bar"></div>
+        <div class="power-bar"></div><div class="power-bar"></div><div class="power-bar"></div>
+        <div class="power-bar"></div><div class="power-bar dim"></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- HOME -->
+    <div id="home" class="page active">
+      <div class="technique-row">
+        <div class="flip-card" ontouchend="flipCard(this)"><div class="flip-inner">
+          <div class="flip-front"><div class="flip-icon">∞</div><div class="flip-name">INFINITY</div></div>
+          <div class="flip-back"><div class="flip-back-name">INFINITY</div><div class="flip-desc">Automatically halts all attacks. Cannot be turned off.</div><div class="flip-power">S+</div></div>
+        </div></div>
+        <div class="flip-card" ontouchend="flipCard(this)"><div class="flip-inner">
+          <div class="flip-front"><div class="flip-icon" style="color:#ff4466;">赤</div><div class="flip-name">RED</div></div>
+          <div class="flip-back" style="border-color:#ff4466;"><div class="flip-back-name" style="color:#ff4466;">RED</div><div class="flip-desc">Repels everything with infinite force.</div><div class="flip-power" style="color:#ff4466;">S</div></div>
+        </div></div>
+        <div class="flip-card" ontouchend="flipCard(this)"><div class="flip-inner">
+          <div class="flip-front"><div class="flip-icon" style="color:#4488ff;">蒼</div><div class="flip-name">BLUE</div></div>
+          <div class="flip-back" style="border-color:#4488ff;"><div class="flip-back-name" style="color:#4488ff;">BLUE</div><div class="flip-desc">Draws all matter to a single point.</div><div class="flip-power" style="color:#4488ff;">S</div></div>
+        </div></div>
+        <div class="flip-card" ontouchend="flipCard(this)"><div class="flip-inner">
+          <div class="flip-front"><div class="flip-icon" style="color:#bb44ff;">紫</div><div class="flip-name">HOLLOW PURPLE</div></div>
+          <div class="flip-back" style="border-color:#bb44ff;"><div class="flip-back-name" style="color:#bb44ff;">HOLLOW PURPLE</div><div class="flip-desc">Erases everything in its path.</div><div class="flip-power" style="color:#bb44ff;">∞</div></div>
+        </div></div>
+      </div>
+      <div class="manga-grid">
+        <div class="panel panel-main">
+          <img src="https://i.pinimg.com/originals/68/cb/71/68cb71a8f7f5b7f7b3e4b5c65efda47b.jpg" onerror="this.src='https://placehold.co/700x420/04020a/00d4ff?text=GOJO+SATORU'" alt="Gojo Satoru">
+          <div class="panel-caption"><div class="panel-title">SIX EYES</div><div class="panel-sub">無下限術式 — INFINITY TECHNIQUE</div></div>
+          <div class="panel-cut"></div>
+        </div>
+        <div class="panel side-panel">
+          <img src="https://wallpaperaccess.com/full/7111093.jpg" onerror="this.src='https://placehold.co/400x200/04020a/9b30ff?text=DOMAIN'" alt="Domain">
+          <div class="panel-caption"><div class="panel-title">UNLIMITED VOID</div><div class="panel-sub">領域展開</div></div>
+          <div class="panel-cut"></div>
+        </div>
+        <div class="panel side-panel">
+          <img src="https://wallpaperaccess.com/full/6941892.jpg" onerror="this.src='https://placehold.co/400x200/04020a/00d4ff?text=HOLLOW+PURPLE'" alt="Hollow Purple">
+          <div class="panel-caption"><div class="panel-title">HOLLOW PURPLE</div><div class="panel-sub">虚式·紫</div></div>
+          <div class="panel-cut"></div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-val">∞</div><div class="stat-lbl">Infinity</div></div>
+        <div class="stat-box"><div class="stat-val">S+</div><div class="stat-lbl">Grade</div></div>
+        <div class="stat-box"><div class="stat-val">6</div><div class="stat-lbl">Eyes</div></div>
+        <div class="stat-box"><div class="stat-val">∞</div><div class="stat-lbl">Power</div></div>
+      </div>
+      <div class="speech-bubble"><span id="bubble-home"></span><span id="bubble-cursor" style="display:inline-block;width:2px;height:1em;background:#000;vertical-align:middle;animation:blink 0.7s step-end infinite;"></span></div>
+      <style>@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}</style>
+    </div>
+
+    <!-- GAMING -->
+    <div id="gaming" class="page">
+      <div class="page-header"><span class="page-num">02</span><span class="page-name">// TURBO COMBAT</span></div>
+      <div class="game-grid">
+        <div class="game-card">
+          <img src="https://images.alphacoders.com/128/1288005.png" onerror="this.src='https://placehold.co/500x260/04020a/ff2244?text=ROBLOX'" alt="Roblox">
+          <div class="game-card-overlay"></div>
+          <div class="game-card-info"><div class="game-card-name">ROBLOX</div><div class="game-card-tag">// PVP ACTIVE</div></div>
+          <div class="game-rank">RANK S</div>
+        </div>
+        <div class="game-card">
+          <img src="https://images.alphacoders.com/128/1289218.jpg" onerror="this.src='https://placehold.co/500x260/04020a/9b30ff?text=BLOX+FRUITS'" alt="Blox Fruits">
+          <div class="game-card-overlay"></div>
+          <div class="game-card-info"><div class="game-card-name">BLOX FRUITS</div><div class="game-card-tag">// GRINDING</div></div>
+          <div class="game-rank">MAX LVL</div>
+        </div>
+      </div>
+
+      <!-- DEVIL FRUITS -->
+      <div class="df-section">
+        <div class="df-section-title">// ⚡ DEVIL FRUITS — TOP 10 RANKED</div>
+        <div class="df-grid" id="df-grid"></div>
+      </div>
+
+      <div class="arcade-section">
+        <div class="arcade-label">// CURSED ARCADE — SELECT GAME</div>
+        <div class="arcade-row">
+          <button class="arcade-btn" onclick="openGame('flappy')">
+            <div class="arcade-btn-icon">🐦</div>
+            <div class="arcade-btn-name">FLAPPY SORCERER</div>
+            <div class="arcade-btn-sub">// TAP TO FLY</div>
+            <div class="arcade-btn-badge">HOT</div>
+          </button>
+          <button class="arcade-btn" onclick="openGame('snake')">
+            <div class="arcade-btn-icon">🐍</div>
+            <div class="arcade-btn-name">CURSED SNAKE</div>
+            <div class="arcade-btn-sub">// EAT TO GROW</div>
+            <div class="arcade-btn-badge">NEW</div>
+          </button>
+          <button class="arcade-btn" onclick="openGame('pong')">
+            <div class="arcade-btn-icon">🏓</div>
+            <div class="arcade-btn-name">INFINITY PONG</div>
+            <div class="arcade-btn-sub">// STOP THE BALL</div>
+            <div class="arcade-btn-badge">VS AI</div>
+          </button>
+        </div>
+      </div>
+      <div class="stat-row" style="margin-top:8px;">
+        <div class="stat-box"><div class="stat-val">100+</div><div class="stat-lbl">Hours</div></div>
+        <div class="stat-box"><div class="stat-val">WIN</div><div class="stat-lbl">Streak</div></div>
+        <div class="stat-box"><div class="stat-val">∞</div><div class="stat-lbl">Sigma</div></div>
+        <div class="stat-box"><div class="stat-val">S+</div><div class="stat-lbl">Skill</div></div>
+      </div>
+      <div class="speech-bubble" style="margin-top:8px;"><span id="bubble-gaming"></span></div>
+    </div>
+
+    <!-- FITNESS -->
+    <div id="fitness" class="page">
+      <div class="page-header"><span class="page-num">03</span><span class="page-name">// PEAK POWER PROTOCOL</span></div>
+      <div class="fit-hero">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200" onerror="this.src='https://placehold.co/900x220/04020a/00d4ff?text=PEAK+FORM'" alt="Fitness">
+        <div class="fit-hero-overlay"></div>
+        <div class="fit-hero-title">
+          <div class="big">PEAK<span>FORM</span></div>
+          <div class="sub">// ASCENSION PROTOCOL — ACTIVE</div>
+        </div>
+        <div class="fit-hero-badges">
+          <span class="fit-badge fit-badge-fire">⚡ LIMIT BREAK</span>
+          <span class="fit-badge fit-badge-day" id="current-day-badge">DAY 01</span>
+        </div>
+      </div>
+      <div class="fit-micro-stats">
+        <div class="micro-stat"><div class="micro-stat-val" id="ms-sets">0</div><div class="micro-stat-lbl">Sets Done</div><div class="micro-stat-icon">💪</div></div>
+        <div class="micro-stat"><div class="micro-stat-val" id="ms-exes">0</div><div class="micro-stat-lbl">Exercises</div><div class="micro-stat-icon">🏋</div></div>
+        <div class="micro-stat"><div class="micro-stat-val" id="ms-pct">0%</div><div class="micro-stat-lbl">Complete</div><div class="micro-stat-icon">📈</div></div>
+        <div class="micro-stat"><div class="micro-stat-val" id="ms-streak">0</div><div class="micro-stat-lbl">Day Streak</div><div class="micro-stat-icon">🔥</div></div>
+      </div>
+      <div class="global-progress">
+        <div class="gp-header"><div class="gp-title">// SESSION PROGRESS</div><div class="gp-percent" id="gp-percent">0%</div></div>
+        <div class="gp-bar-wrap"><div class="gp-bar-fill" id="gp-bar" style="width:0%"></div></div>
+        <div class="gp-stats">
+          <div class="gp-stat">SETS DONE <span id="gp-sets">0</span></div>
+          <div class="gp-stat">EXERCISES <span id="gp-exes">0</span></div>
+          <div class="gp-stat">REST BREAKS <span id="gp-rest-count">0</span>x</div>
+          <div class="gp-stat">VOL SCORE <span id="gp-vol">0</span></div>
+        </div>
+      </div>
+      <div class="week-grid-section">
+        <div class="muscle-map-label">// WEEKLY CALENDAR</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">
+          <div style="text-align:center;"><div class="week-cell today" id="wk-0" onclick="markWeekDay(0)">MON</div></div>
+          <div style="text-align:center;"><div class="week-cell" id="wk-1" onclick="markWeekDay(1)">TUE</div></div>
+          <div style="text-align:center;"><div class="week-cell" id="wk-2" onclick="markWeekDay(2)">WED</div></div>
+          <div style="text-align:center;"><div class="week-cell" id="wk-3" onclick="markWeekDay(3)">THU</div></div>
+          <div style="text-align:center;"><div class="week-cell" id="wk-4" onclick="markWeekDay(4)">FRI</div></div>
+          <div style="text-align:center;"><div class="week-cell" id="wk-5" onclick="markWeekDay(5)">SAT</div></div>
+          <div style="text-align:center;"><div class="week-cell" id="wk-6" onclick="markWeekDay(6)">SUN</div></div>
+        </div>
+      </div>
+      <div class="muscle-map-section">
+        <div class="muscle-map-label">// MUSCLES TARGETED TODAY</div>
+        <div class="muscle-map-grid" id="muscle-map"></div>
+      </div>
+      <div class="day-selector" id="day-selector">
+        <div class="day-tab active" onclick="selectDay(0,this)">DAY 01</div>
+        <div class="day-tab" onclick="selectDay(1,this)">DAY 02</div>
+        <div class="day-tab" onclick="selectDay(2,this)">DAY 03</div>
+        <div class="day-tab" onclick="selectDay(3,this)">VOID CORE</div>
+      </div>
+      <div class="rest-timer" id="rest-timer">
+        <div><div class="rest-label">// REST TIMER</div><div class="rest-countdown" id="rest-cd">60</div></div>
+        <div class="rest-bar"><div class="rest-bar-fill" id="rest-bar-fill" style="width:100%"></div></div>
+        <button class="rest-skip" onclick="skipRest()">SKIP ▶</button>
+      </div>
+      <div class="workout-panel" id="workout-panel">
+        <div class="workout-header">
+          <div>
+            <div class="workout-day-name" id="wd-name">DAY 01 — PUSH DOMINANCE</div>
+            <div class="workout-day-focus" id="wd-focus">// CHEST · SHOULDERS · TRICEPS</div>
+          </div>
+          <button class="workout-complete-btn" id="wd-complete-btn" onclick="markDayComplete()">MARK COMPLETE</button>
+        </div>
+        <div class="exercise-list" id="exercise-list"></div>
+      </div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat-box"><div class="stat-val">7</div><div class="stat-lbl">Days/Week</div></div>
+        <div class="stat-box"><div class="stat-val" id="fit-stat-sets">0</div><div class="stat-lbl">Sets Done</div></div>
+        <div class="stat-box"><div class="stat-val">∞</div><div class="stat-lbl">Drive</div></div>
+        <div class="stat-box"><div class="stat-val" id="fit-stat-pct">0%</div><div class="stat-lbl">Complete</div></div>
+      </div>
+      <div class="speech-bubble" style="margin-top:8px;"><span id="bubble-fitness"></span></div>
+    </div>
+  </main>
+</div>
+
+<button id="domain-btn" onclick="openPicker()">⬡ DOMAIN</button>
+
+<script>
+/* ======================================================
+   PIXEL ART — GOJO SIX EYES (24x24 grid → 8px each = 192px)
+   ====================================================== */
+(function drawGojo(){
+  const c = document.getElementById('pixel-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const S = 8; // scale
+  // 24x24 pixel art — Gojo Satoru face + white hair + blindfold + six eyes glow
+  const W='#ffffff', B='#000000', SK='#f5c5a3', BF='#1a1a2e', BL='#00d4ff', PU='#9b30ff',
+        GR='#1a0a2e', HI='#d0f0ff', SH='#c89070', NL='rgba(0,0,0,0)',
+        DR='#2a0a50', WH='#f0e8ff';
+  // 0=transparent, map colors
+  const P={_:B,' ':NL,W,K:SK,S:SH,b:BF,L:BL,P:PU,G:GR,H:HI,D:DR,h:WH,I:'#888',X:'#555'};
+  const art=[
+  //  123456789012345678901234
+    '        WWWWWWWW        ',
+    '      WWWWWWWWWWWW      ',
+    '    WWWWWWWWWWWWWWWW    ',
+    '   WWWWWWWWWWWWWWWWWW   ',
+    '  WWWWWWWWKKKKWWWWWWWh  ',
+    ' WWWWWWWKKKKKKKKWWWWWWh ',
+    ' WWWWWKKKKKKKKKKKWWWWWh ',
+    ' WWhKKKKKKKKKKKKKKhWWhh ',
+    '  hKKKbbbbbbbbbbKKKhhh  ',
+    '  KKKbbbbbbbbbbbbKKKhh  ',
+    '  KKbbLLbbbbbbLLbbKKhh  ',
+    '  KKbLLLLbbbbLLLLbKKh   ',
+    '  KKbbLLbbbbbbLLbbKKh   ',
+    '  KKKbbbbbbbbbbbbKKKh   ',
+    '  KKKKbbbbbbbbbbKKKhh   ',
+    '   KKKKKKKKKKKKKKKhh    ',
+    '   KKKKKSSSSSSKKKKhh    ',
+    '   KKKKSSSSSSSKKKKK     ',
+    '   KKKKKKKKKKKKKKhh     ',
+    '    hKKKhhhhhhKKKhh     ',
+    '    hhhhhhhhhhhhhhh     ',
+    '   GGGGGGGGGGGGGGGGh    ',
+    '  GGGGGGGGGGGGGGGGGGh   ',
+    '                        ',
+  ];
+  // Remap char to color
+  const CMAP={' ':'rgba(0,0,0,0)','W':'#f0f0ff','K':'#f5c5a3','S':'#c89070','b':'#1a0a2e',
+    'L':'#00d4ff','h':'#d0d0ff','G':'#1a1a2e','H':'#d0f0ff','P':'#9b30ff','_':'#000'};
+  art.forEach((row,y)=>{
+    [...row].forEach((ch,x)=>{
+      const col = CMAP[ch]||'rgba(0,0,0,0)';
+      if(col==='rgba(0,0,0,0)') return;
+      ctx.fillStyle = col;
+      ctx.fillRect(x*S, y*S, S, S);
+    });
+  });
+  // Glow rings around eyes (L pixels = Six Eyes)
+  art.forEach((row,y)=>{
+    [...row].forEach((ch,x)=>{
+      if(ch==='L'){
+        ctx.fillStyle='rgba(0,212,255,0.35)';
+        ctx.fillRect(x*S-1,y*S-1,S+2,S+2);
+        ctx.fillStyle='#00d4ff';
+        ctx.fillRect(x*S,y*S,S,S);
+      }
+    });
+  });
+  // Six Eyes glowing dots at pupils
+  const eyeL=[{x:10,y:10},{x:9,y:10},{x:10,y:11}];
+  const eyeR=[{x:14,y:10},{x:15,y:10},{x:14,y:11}];
+  [...eyeL,...eyeR].forEach(p=>{
+    ctx.shadowBlur=12;ctx.shadowColor='#00d4ff';
+    ctx.fillStyle='#00d4ff';
+    ctx.fillRect(p.x*S+1,p.y*S+1,S-2,S-2);
+    ctx.shadowBlur=0;
+  });
+  // Ambient glow
+  const grd=ctx.createRadialGradient(96,96,30,96,96,96);
+  grd.addColorStop(0,'rgba(0,212,255,0)');
+  grd.addColorStop(1,'rgba(0,212,255,0.08)');
+  ctx.fillStyle=grd;
+  ctx.fillRect(0,0,192,192);
+})();
+
+/* ======================================================
+   DEVIL FRUITS DATA
+   ====================================================== */
+const DEVIL_FRUITS = [
+  {
+    name:"Gum-Gum Fruit",jpn:"ゴムゴムの実",type:"Paramecia",typeClass:"paramecia",
+    user:"Monkey D. Luffy",
+    img:"https://static.wikia.nocookie.net/onepiece/images/8/8e/Gomu_Gomu_no_Mi_Infobox.png/revision/latest?cb=20210715082551",
+    imgFallback:"https://placehold.co/200x200/04020a/00d4ff?text=GUM-GUM",
+    power:"Rubber body — immune to blunt attacks & electricity. True form: Nika, Sun God.",
+    desc:"The most ridiculous and most powerful. Luffy stretches, inflates, and gears up. Awakened as the mythical Zoan of Sun God Nika — embodiment of freedom."
+  },
+  {
+    name:"Darkness Fruit",jpn:"ヤミヤミの実",type:"Logia",typeClass:"logia",
+    user:"Marshall D. Teach",
+    img:"https://static.wikia.nocookie.net/onepiece/images/2/29/Yami_Yami_no_Mi_Infobox.png/revision/latest?cb=20210715082754",
+    imgFallback:"https://placehold.co/200x200/04020a/9b30ff?text=DARKNESS",
+    power:"Absorbs everything. Nullifies other Devil Fruit powers.",
+    desc:"Blackbeard's terrifying fruit. Creates a black hole that sucks in all matter. Cannot be hurt as darkness but still takes damage — the price of infinite power."
+  },
+  {
+    name:"Flame-Flame Fruit",jpn:"メラメラの実",type:"Logia",typeClass:"logia",
+    user:"Portgas D. Ace",
+    img:"https://static.wikia.nocookie.net/onepiece/images/0/05/Mera_Mera_no_Mi_Infobox.png/revision/latest?cb=20210715082659",
+    imgFallback:"https://placehold.co/200x200/060e18/ff4400?text=FLAME",
+    power:"Control and transform into fire. Blazing punches.",
+    desc:"Ace's iconic fruit. Transforms body into fire, shoots fire fists, flies with flame propulsion. One of the most visually iconic Logia powers in the series."
+  },
+  {
+    name:"Quake-Quake Fruit",jpn:"グラグラの実",type:"Paramecia",typeClass:"paramecia",
+    user:"Edward Newgate (Whitebeard)",
+    img:"https://static.wikia.nocookie.net/onepiece/images/9/9c/Gura_Gura_no_Mi_Infobox.png/revision/latest?cb=20210715082543",
+    imgFallback:"https://placehold.co/200x200/04020a/ffcc00?text=QUAKE",
+    power:"Create earthquakes and shockwaves capable of destroying the world.",
+    desc:"Called the strongest Paramecia. Whitebeard shook the heavens and cracked the sky. Now wielded by Blackbeard. Capable of destroying all of geography."
+  },
+  {
+    name:"Op-Op Fruit",jpn:"オペオペの実",type:"Paramecia",typeClass:"paramecia",
+    user:"Trafalgar D. Water Law",
+    img:"https://static.wikia.nocookie.net/onepiece/images/3/33/Ope_Ope_no_Mi_Infobox.png/revision/latest?cb=20210715082703",
+    imgFallback:"https://placehold.co/200x200/04020a/00d4ff?text=OP-OP",
+    power:"ROOM — absolute sovereignty over a 3D space. Teleport, swap, cut without damage.",
+    desc:"Called the Ultimate Devil Fruit. Can grant immortality at the cost of the user's life. Law's ROOM allows him to perform impossible medical surgeries and tactical maneuvers."
+  },
+  {
+    name:"Magma-Magma Fruit",jpn:"マグマグの実",type:"Logia",typeClass:"logia",
+    user:"Sakazuki (Akainu)",
+    img:"https://static.wikia.nocookie.net/onepiece/images/c/ca/Magu_Magu_no_Mi_Infobox.png/revision/latest?cb=20210715082655",
+    imgFallback:"https://placehold.co/200x200/060e18/ff2200?text=MAGMA",
+    power:"Transform into magma. Burns even fire itself.",
+    desc:"The most destructive Logia. Magma burns hotter than fire and actually counters it. Akainu's absolute justice is backed by absolute destructive power."
+  },
+  {
+    name:"Human-Human Fruit, Model: Nika",jpn:"ヒトヒトの実幻獣種モデル太陽神ニカ",type:"Zoan (Mythical)",typeClass:"zoan",
+    user:"Monkey D. Luffy (Gear 5)",
+    img:"https://static.wikia.nocookie.net/onepiece/images/5/5b/Hito_Hito_no_Mi%2C_Model%3A_Nika_Infobox.png/revision/latest?cb=20220821045458",
+    imgFallback:"https://placehold.co/200x200/04020a/ffffff?text=NIKA",
+    power:"Sun God Nika — cartoon physics, total freedom, laughter.",
+    desc:"The most ridiculous power in existence — and the most free. In Gear 5, Luffy turns the world into a cartoon. His heartbeat is the drums of liberation."
+  },
+  {
+    name:"Paw-Paw Fruit",jpn:"ニキュニキュの実",type:"Paramecia",typeClass:"paramecia",
+    user:"Bartholomew Kuma",
+    img:"https://static.wikia.nocookie.net/onepiece/images/a/ab/Nikyu_Nikyu_no_Mi_Infobox.png/revision/latest?cb=20210715082701",
+    imgFallback:"https://placehold.co/200x200/04020a/9b30ff?text=PAW",
+    power:"Repel anything at the speed of light. Remove pain, memories, fatigue.",
+    desc:"Kuma can push air into paws and launch it as massive paw print shockwaves. He teleported the entire Straw Hat crew across the world in an instant."
+  },
+  {
+    name:"Rumble-Rumble Fruit",jpn:"ゴロゴロの実",type:"Logia",typeClass:"logia",
+    user:"Enel",
+    img:"https://static.wikia.nocookie.net/onepiece/images/c/cd/Goro_Goro_no_Mi_Infobox.png/revision/latest?cb=20210715082548",
+    imgFallback:"https://placehold.co/200x200/04020a/ffff00?text=RUMBLE",
+    power:"Lightning Logia — 200M volt attacks, near-instantaneous movement.",
+    desc:"Enel called himself God with this. 200 million volts of lightning, travel at lightning speed, and restart your own heart. Only rubber users are immune."
+  },
+  {
+    name:"Flower-Flower Fruit",jpn:"ハナハナの実",type:"Paramecia",typeClass:"paramecia",
+    user:"Nico Robin",
+    img:"https://static.wikia.nocookie.net/onepiece/images/b/b5/Hana_Hana_no_Mi_Infobox.png/revision/latest?cb=20210715082550",
+    imgFallback:"https://placehold.co/200x200/04020a/ff88cc?text=FLOWER",
+    power:"Sprout copies of body parts on any surface. Unlimited reach.",
+    desc:"Robin can bloom her limbs anywhere within range — snap necks, grab at impossible distances, create giant bodies. Awakened adds massive floral giants to her arsenal."
+  }
+];
+
+function renderDevilFruits(){
+  const grid = document.getElementById('df-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  DEVIL_FRUITS.forEach((f,i)=>{
+    const card = document.createElement('div');
+    card.className = 'df-card';
+    card.onclick = ()=>openDFModal(i);
+    card.innerHTML = `
+      <div class="df-img-wrap">
+        <img src="${f.img}" onerror="this.src='${f.imgFallback}'" alt="${f.name}" loading="lazy">
+        <div class="df-type-badge df-type-${f.typeClass}">${f.type}</div>
+      </div>
+      <div class="df-info">
+        <div class="df-fruit-name">${f.name}</div>
+        <div class="df-user">${f.user}</div>
+        <div class="df-power">${f.jpn}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function openDFModal(idx){
+  const f = DEVIL_FRUITS[idx];
+  document.getElementById('df-modal-img').src = f.img;
+  document.getElementById('df-modal-img').onerror = function(){this.src=f.imgFallback;};
+  document.getElementById('df-modal-name').textContent = f.name;
+  document.getElementById('df-modal-type').textContent = f.type.toUpperCase()+' · '+f.jpn;
+  document.getElementById('df-modal-user').textContent = '⚡ '+f.user;
+  document.getElementById('df-modal-desc').innerHTML = '<strong>Power:</strong> '+f.power+'<br><br>'+f.desc;
+  document.getElementById('df-modal').classList.add('open');
+  try{playSwitch();}catch(e){}
+}
+function closeDFModal(){
+  document.getElementById('df-modal').classList.remove('open');
+}
+
+/* ======================================================
+   AUDIO
+   ====================================================== */
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC;}
+function beep(freq,type,dur,vol,delay){
+  try{const ac=getAC();const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type=type||'sine';o.frequency.setValueAtTime(freq,ac.currentTime+(delay||0));g.gain.setValueAtTime(vol||0.3,ac.currentTime+(delay||0));g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+(delay||0)+dur);o.start(ac.currentTime+(delay||0));o.stop(ac.currentTime+(delay||0)+dur);}catch(e){}
+}
+function playSwitch(){beep(220,'square',0.08,0.1);beep(440,'square',0.1,0.12,0.05);beep(880,'sine',0.18,0.08,0.12);}
+function playDomain(){[0,0.05,0.1,0.15,0.2].forEach((d,i)=>beep(80+i*20,'sawtooth',0.4,0.18,d));beep(40,'sine',0.8,0.35,0.25);}
+function playAchieve(){beep(523,'sine',0.1,0.18);beep(659,'sine',0.1,0.18,0.1);beep(784,'sine',0.14,0.18,0.2);}
+function playTick(){beep(660,'square',0.04,0.07);}
+function playSetDone(){beep(330,'sine',0.07,0.12);beep(440,'sine',0.1,0.12,0.06);}
+function playFlap(){beep(300,'sine',0.05,0.12);beep(500,'sine',0.03,0.08,0.04);}
+function playScore(){beep(523,'sine',0.07,0.18);beep(784,'sine',0.09,0.18,0.07);}
+function playDie(){beep(200,'sawtooth',0.12,0.28);beep(100,'sawtooth',0.25,0.28,0.1);}
+function playEat(){beep(440,'square',0.05,0.18);beep(660,'square',0.05,0.18,0.05);}
+function playPongHit(){beep(400,'square',0.04,0.15);}
+function playPongScore(){beep(200,'sawtooth',0.08,0.2);beep(150,'sawtooth',0.1,0.2,0.08);}
+
+/* ======================================================
+   THEME SYSTEM
+   ====================================================== */
+let currentTheme='default';
+const THEMES={
+  'default':{kanji:'∞',title:'SIX EYES ONLINE',sub:'無下限術式',sidebar:'SIX EYES SYSTEM',wanted:'⚠ SORCERER FILE ⚠',grade:'SPECIAL GRADE — SIX EYES',bounty:'CURSED ENERGY: ∞ PTS',ticker:'SPECIAL GRADE SORCERER DETECTED &nbsp;<span>// CURSED ENERGY: MAXIMUM //</span>&nbsp; SIX EYES ONLINE &nbsp;<span>// INFINITY ACTIVE //</span>&nbsp; HAMZA.SYS BOOT COMPLETE &nbsp;<span>// DOMAIN READY //</span>&nbsp;',toast:['SIX EYES','Default theme — Limitless cursed energy'],bubble:'THROUGHOUT HEAVEN AND EARTH, I ALONE AM THE HONORED ONE.'},
+  'jjk':{kanji:'無量空処',title:'UNLIMITED VOID',sub:'領域展開 — 激突',sidebar:'DOMAIN EXPANSION',wanted:'⚠ TARGET FILE ⚠',grade:'SPECIAL GRADE — DOMAIN ACTIVE',bounty:'VOID DEPTH: ∞ LAYERS',ticker:'UNLIMITED VOID EXPANDING &nbsp;<span>// ALL INFORMATION OVERLOAD //</span>&nbsp; DOMAIN HIT RATE: 100% &nbsp;<span>// INFINITY TECHNIQUE ACTIVE //</span>&nbsp;',toast:['UNLIMITED VOID','Domain Expansion — JJK theme loaded'],bubble:'IN MY DOMAIN, ALL INFORMATION FLOWS FOREVER. YOU CANNOT MOVE.'},
+  'op':{kanji:'⚓',title:"CONQUEROR'S HAKI",sub:'覇王色 — AWAKENED',sidebar:'WILL OF D. SYSTEM',wanted:'⚠ BOUNTY POSTER ⚠',grade:'YONKO CLASS — WILL OF D.',bounty:'BOUNTY: 3,000,000,000 B',ticker:"CONQUEROR'S HAKI UNLEASHED &nbsp;<span>// WILL OF D. AWAKENED //</span>&nbsp; YONKO SEAS DOMINATED &nbsp;<span>// DEVIL FRUIT: ACTIVE //</span>&nbsp;",toast:["CONQUEROR'S HAKI","One Piece theme — Will of D. activated"],bubble:"I'M GOING TO BE KING OF THE PIRATES!"}
+};
+
+function openPicker(){document.getElementById('theme-picker').classList.add('open');}
+function closePicker(){document.getElementById('theme-picker').classList.remove('open');}
+function applyTheme(theme){
+  closePicker();const t=THEMES[theme];
+  try{playDomain();}catch(e){}
+  document.getElementById('domain-kanji').textContent=t.kanji;
+  document.getElementById('domain-title').textContent=t.title;
+  document.getElementById('domain-sub').textContent=t.sub;
+  const overlay=document.getElementById('domain-overlay');
+  overlay.classList.remove('expand');void overlay.offsetWidth;overlay.classList.add('expand');
+  setTimeout(()=>overlay.classList.remove('expand'),1300);
+  setTimeout(()=>{
+    document.body.classList.remove('theme-jjk','theme-op');
+    if(theme==='jjk')document.body.classList.add('theme-jjk');
+    if(theme==='op')document.body.classList.add('theme-op');
+    currentTheme=theme;
+    document.getElementById('sidebar-sub').textContent=t.sidebar;
+    document.getElementById('wanted-title').textContent=t.wanted;
+    document.getElementById('wanted-grade').textContent=t.grade;
+    document.getElementById('wanted-bounty').textContent=t.bounty;
+    document.querySelectorAll('.ticker-text').forEach(el=>{el.innerHTML=t.ticker+t.ticker;});
+    showToast(t.toast[0],t.toast[1]);
+  },400);
+}
+
+/* ======================================================
+   MOBILE SIDEBAR
+   ====================================================== */
+function toggleSidebar(){
+  const s=document.getElementById('sidebar'),h=document.getElementById('hamburger'),o=document.getElementById('sidebar-overlay');
+  s.classList.toggle('mobile-open');h.classList.toggle('open');o.classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+/* ======================================================
+   CURSOR
+   ====================================================== */
+const cursor=document.getElementById('cursor');
+const trails=[];
+for(let i=0;i<8;i++){const t=document.createElement('div');t.className='trail';document.body.appendChild(t);trails.push({el:t,x:0,y:0});}
+let mx=0,my=0,trailPos=[];
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';trailPos.unshift({x:mx,y:my});if(trailPos.length>40)trailPos.pop();});
+(function animT(){trails.forEach((t,i)=>{const p=trailPos[i*4]||trailPos[trailPos.length-1]||{x:0,y:0};t.x+=(p.x-t.x)*0.3;t.y+=(p.y-t.y)*0.3;t.el.style.left=t.x+'px';t.el.style.top=t.y+'px';const s=Math.max(0,1-(i/trails.length));t.el.style.opacity=s*0.4;t.el.style.transform=`rotate(45deg) translate(-50%,-50%) scale(${s})`;});requestAnimationFrame(animT);})();
+
+/* ======================================================
+   PARTICLES
+   ====================================================== */
+const pc=document.getElementById('particles');
+for(let i=0;i<36;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(4+Math.random()*8)+'s';p.style.animationDelay=(-Math.random()*10)+'s';pc.appendChild(p);}
+
+/* ======================================================
+   FLIP CARDS
+   ====================================================== */
+function flipCard(card){card.classList.toggle('flipped');}
+
+/* ======================================================
+   SPLASH
+   ====================================================== */
+const bar=document.getElementById('load-bar');let prog=0;
+setTimeout(()=>{
+  const li=setInterval(()=>{
+    prog=Math.min(100,prog+(Math.random()*6+2));bar.style.width=prog+'%';
+    if(prog>=100){
+      clearInterval(li);
+      setTimeout(()=>{
+        const sp=document.getElementById('splash');
+        if(sp){sp.style.animation='splashOut 0.5s ease-in forwards';setTimeout(()=>sp.remove(),500);}
+        document.querySelectorAll('.power-bar:not(.dim)').forEach((b,i)=>setTimeout(()=>b.classList.add('on'),i*110));
+        setTimeout(()=>typeText('bubble-home','THROUGHOUT HEAVEN AND EARTH, I ALONE AM THE HONORED ONE.',28),700);
+        setTimeout(()=>showToast('BOOT COMPLETE','SIX EYES ONLINE — WELCOME, HAMZA'),700);
+      },380);
+    }
+  },80);
+},1400);
+
+/* ======================================================
+   UTILS
+   ====================================================== */
+function typeText(id,text,speed){
+  const el=document.getElementById(id);if(!el)return;
+  el.textContent='';let i=0;
+  const t=setInterval(()=>{if(i<text.length){el.textContent+=text[i];i++;}else clearInterval(t);},speed||40);
+}
+function showToast(title,msg){
+  try{playAchieve();}catch(e){}
+  const c=document.getElementById('toast-container');
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<div class="toast-title">⚡ ${title}</div><div class="toast-msg">${msg}</div>`;
+  c.appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),300);},3500);
+}
+
+/* ======================================================
+   PAGE SWITCH — FIXED (removed glitchy ink-wipe, clean CSS animation)
+   ====================================================== */
+const bubbles={
+  home:'THROUGHOUT HEAVEN AND EARTH, I ALONE AM THE HONORED ONE.',
+  gaming:'CHOOSE THE PATH OF POWER. ALWAYS.',
+  fitness:'THIS IS NOT TRAINING. THIS IS ASCENSION.'
+};
+const toasts={
+  home:['SPIRIT CORE','Six Eyes technique initialized'],
+  gaming:['TURBO COMBAT','Entering combat arena...'],
+  fitness:['PEAK POWER','Maximum output engaged']
+};
+let currentPage='home';
+let switching=false;
+
+function show(id,btn){
+  if(switching||id===currentPage) return;
+  switching=true;
+  closeSidebar();
+  try{playSwitch();}catch(e){}
+
+  // Instantly hide current, show new with CSS animation
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  currentPage=id;
+  const newPage=document.getElementById(id);
+  newPage.classList.add('active');
+
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+
+  // Type bubble text
+  const t=THEMES[currentTheme];
+  const el=document.getElementById('bubble-'+id);
+  if(el){
+    el.textContent='';
+    const txt=(id==='home')?bubbles[id]:(t?t.bubble:bubbles[id]||bubbles[id]);
+    setTimeout(()=>typeText('bubble-'+id,txt||bubbles[id]||'',35),80);
+  }
+  if(toasts[id])showToast(toasts[id][0],toasts[id][1]);
+  setTimeout(()=>{switching=false;},300);
+}
+
+setTimeout(()=>typeText('bubble-home',bubbles.home,32),4000);
+
+/* ======================================================
+   WEEK CALENDAR
+   ====================================================== */
+let weekDone=new Array(7).fill(false);
+function markWeekDay(idx){
+  weekDone[idx]=!weekDone[idx];
+  document.getElementById('wk-'+idx).classList.toggle('done',weekDone[idx]);
+  let streak=0;for(let i=weekDone.length-1;i>=0;i--){if(weekDone[i])streak++;else break;}
+  document.getElementById('ms-streak').textContent=streak;
+}
+
+/* ======================================================
+   MUSCLE MAP
+   ====================================================== */
+const ALL_MUSCLES=[{icon:'💪',name:'CHEST'},{icon:'🔥',name:'BACK'},{icon:'⚡',name:'SHOULDERS'},{icon:'💥',name:'BICEPS'},{icon:'🦾',name:'TRICEPS'},{icon:'🦵',name:'QUADS'},{icon:'🏃',name:'HAMS'},{icon:'🧘',name:'CORE'},{icon:'🦴',name:'CALVES'},{icon:'🎯',name:'GLUTES'},{icon:'✊',name:'FOREARMS'},{icon:'🌊',name:'CARDIO'}];
+const DAY_MUSCLES=[[0,2,4],[1,3,7],[5,6,8,9],[7,2,10]];
+function renderMuscleMap(dayIdx){
+  const el=document.getElementById('muscle-map');el.innerHTML='';
+  ALL_MUSCLES.forEach((m,i)=>{
+    const active=DAY_MUSCLES[dayIdx]&&DAY_MUSCLES[dayIdx].includes(i);
+    const chip=document.createElement('div');chip.className='muscle-chip'+(active?' active':'');
+    chip.innerHTML=`<span class="muscle-chip-icon">${m.icon}</span><span class="muscle-chip-name">${m.name}</span>`;
+    el.appendChild(chip);
+  });
+}
+
+/* ======================================================
+   FITNESS
+   ====================================================== */
+const WORKOUT_DATA=[
+  {name:'DAY 01 — PUSH DOMINANCE',focus:'// CHEST · SHOULDERS · TRICEPS',exercises:[
+    {name:'Dips (Weighted)',sets:4,reps:'10-12',rest:90,color:'var(--blue)',progress:92,tag:'hyp',tip:'Lean forward for chest, stay upright for triceps'},
+    {name:'Overhead Press',sets:4,reps:'8-10',rest:120,color:'var(--blue)',progress:88,tag:'str',tip:'Keep core braced, don\'t arch back'},
+    {name:'Push-ups (Diamond)',sets:3,reps:'MAX',rest:60,color:'var(--purple)',progress:95,tag:'end',tip:'Elbows close to body'},
+    {name:'Lateral Raises',sets:3,reps:'12-15',rest:60,color:'var(--purple)',progress:80,tag:'hyp',tip:'Slight bend in elbows, lead with pinkies'},
+  ]},
+  {name:'DAY 02 — PULL ASCENSION',focus:'// BACK · BICEPS · REAR DELTS',exercises:[
+    {name:'Pull-ups (Wide Grip)',sets:5,reps:'8-12',rest:120,color:'var(--blue)',progress:90,tag:'str',tip:'Dead hang start, full ROM'},
+    {name:'Barbell Rows',sets:4,reps:'10',rest:90,color:'var(--blue)',progress:85,tag:'str',tip:'Chest touches bar at top'},
+    {name:'Face Pulls',sets:3,reps:'15',rest:60,color:'var(--purple)',progress:97,tag:'end',tip:'Pull to forehead, elbows high'},
+    {name:'Hammer Curls',sets:3,reps:'12',rest:60,color:'var(--purple)',progress:82,tag:'hyp',tip:'Neutral grip, slow negative'},
+  ]},
+  {name:'DAY 03 — LEGS INFINITY',focus:'// QUADS · HAMSTRINGS · CALVES',exercises:[
+    {name:'Squats (Deep)',sets:4,reps:'8-10',rest:120,color:'var(--blue)',progress:89,tag:'str',tip:'Below parallel, chest up'},
+    {name:'Romanian Deadlift',sets:4,reps:'10',rest:120,color:'var(--blue)',progress:87,tag:'str',tip:'Feel the hamstring stretch'},
+    {name:'Bulgarian Split Squats',sets:3,reps:'10ea',rest:90,color:'var(--purple)',progress:83,tag:'hyp',tip:'Front foot far enough forward'},
+    {name:'Calf Raises',sets:5,reps:'20',rest:45,color:'var(--purple)',progress:100,tag:'end',tip:'Full range, pause at top and bottom'},
+  ]},
+  {name:'DAILY — VOID CORE',focus:'// ABS · STABILITY · BALANCE',exercises:[
+    {name:'Hollow Body Hold',sets:4,reps:'45-60s',rest:60,color:'var(--blue)',progress:88,tag:'end',tip:'Lower back pressed to floor'},
+    {name:'L-Sit Progression',sets:3,reps:'MAX',rest:90,color:'var(--blue)',progress:75,tag:'str',tip:'Start with tucked knees'},
+    {name:'Dragon Flag Negatives',sets:3,reps:'6-8',rest:90,color:'var(--purple)',progress:70,tag:'str',tip:'Super slow descent = max tension'},
+    {name:'Handstand Practice',sets:1,reps:'10 min',rest:0,color:'var(--purple)',progress:60,tag:'end',tip:'Wall kick-ups, work on balance'},
+  ]}
+];
+let currentDay=0,setState=[],restInterval2=null,restTimeLeft=0,totalSets=0,doneSets=0,restCount=0,volScore=0;
+function initState(){
+  totalSets=0;doneSets=0;restCount=0;volScore=0;
+  setState=WORKOUT_DATA.map(day=>day.exercises.map(ex=>Array(ex.sets).fill(false)));
+  WORKOUT_DATA.forEach(day=>day.exercises.forEach(ex=>totalSets+=ex.sets));
+  updateGlobalProgress();renderMuscleMap(0);
+}
+function updateGlobalProgress(){
+  doneSets=setState.flat(2).filter(Boolean).length;
+  const doneExes=setState.map(day=>day.filter(ex=>ex.every(Boolean)).length).reduce((a,b)=>a+b,0);
+  const pct=Math.round((doneSets/totalSets)*100);
+  document.getElementById('gp-percent').textContent=pct+'%';
+  document.getElementById('gp-bar').style.width=pct+'%';
+  document.getElementById('gp-sets').textContent=doneSets;
+  document.getElementById('gp-exes').textContent=doneExes;
+  document.getElementById('gp-rest-count').textContent=restCount;
+  document.getElementById('gp-vol').textContent=volScore;
+  document.getElementById('fit-stat-sets').textContent=doneSets;
+  document.getElementById('fit-stat-pct').textContent=pct+'%';
+  document.getElementById('ms-sets').textContent=doneSets;
+  document.getElementById('ms-exes').textContent=doneExes;
+  document.getElementById('ms-pct').textContent=pct+'%';
+}
+function selectDay(idx,tabEl){
+  currentDay=idx;
+  document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
+  tabEl.classList.add('active');
+  document.getElementById('current-day-badge').textContent='DAY 0'+(idx+1);
+  renderMuscleMap(idx);renderWorkout();
+}
+function renderWorkout(){
+  const day=WORKOUT_DATA[currentDay];
+  document.getElementById('wd-name').textContent=day.name;
+  document.getElementById('wd-focus').textContent=day.focus;
+  const dayDone=setState[currentDay].every(ex=>ex.every(Boolean));
+  const btn=document.getElementById('wd-complete-btn');
+  btn.classList.toggle('done',dayDone);btn.textContent=dayDone?'✓ COMPLETE':'MARK COMPLETE';
+  const list=document.getElementById('exercise-list');list.innerHTML='';
+  day.exercises.forEach((ex,exIdx)=>{
+    const exDone=setState[currentDay][exIdx].every(Boolean);
+    const setsDone=setState[currentDay][exIdx].filter(Boolean).length;
+    let dotsHtml='';
+    for(let s=0;s<ex.sets;s++){
+      const isDone=setState[currentDay][exIdx][s];
+      const isNext=!isDone&&setState[currentDay][exIdx].slice(0,s).every(Boolean);
+      dotsHtml+=`<div class="set-dot ${isDone?'done':''} ${isNext?'active-set':''}" onclick="toggleSet(${currentDay},${exIdx},${s})">${isDone?'✓':(s+1)}</div>`;
+    }
+    let volHtml='';
+    for(let s=0;s<ex.sets;s++){const h=4+s*3;const done=setState[currentDay][exIdx][s];volHtml+=`<div class="vol-bar ${done?'done-bar':''}" style="height:${h}px;background:${ex.color};"></div>`;}
+    const pct2=(setsDone/ex.sets)*100;
+    const tagClass={'hyp':'ex-tag-hyp','str':'ex-tag-str','end':'ex-tag-end'}[ex.tag]||'';
+    const tagLabel={'hyp':'HYPERTROPHY','str':'STRENGTH','end':'ENDURANCE'}[ex.tag]||'';
+    const item=document.createElement('div');item.className='ex-item';item.style.opacity=exDone?'0.65':'1';
+    item.innerHTML=`<div class="ex-top"><div class="ex-name" style="color:${exDone?'var(--green)':ex.color}">${exDone?'✓ ':''}${ex.name}</div><div class="ex-meta"><span class="ex-tag ${tagClass}">${tagLabel}</span><span class="ex-sets-badge">${ex.sets}×${ex.reps}</span><div class="ex-check ${exDone?'checked':''}" onclick="toggleAllSets(${currentDay},${exIdx})"></div></div></div><div class="ex-progress-wrap"><div class="ex-progress-fill" style="width:${pct2}%;background:${ex.color};box-shadow:0 0 5px ${ex.color};"></div></div><div class="set-tracker">${dotsHtml}<div class="ex-volume-row">${volHtml}</div></div><div class="ex-detail"><span>REST: ${ex.rest>0?ex.rest+'s':'—'}</span><span>${setsDone}/${ex.sets} SETS</span><span style="color:rgba(255,255,255,0.18);font-style:italic;">${ex.tip}</span></div>`;
+    list.appendChild(item);
+  });
+}
+function toggleSet(dayIdx,exIdx,setIdx){
+  const wasChecked=setState[dayIdx][exIdx][setIdx];setState[dayIdx][exIdx][setIdx]=!wasChecked;
+  try{playSetDone();}catch(e){}
+  if(!wasChecked){volScore+=10;const ex=WORKOUT_DATA[dayIdx].exercises[exIdx];const justFinished=setState[dayIdx][exIdx].every(Boolean);if(ex.rest>0&&!justFinished)startRest(ex.rest);else if(justFinished)showToast('EXERCISE CLEARED',ex.name+' — COMPLETE');}
+  else{volScore=Math.max(0,volScore-10);stopRest2();}
+  updateGlobalProgress();renderWorkout();
+}
+function toggleAllSets(dayIdx,exIdx){
+  const allDone=setState[dayIdx][exIdx].every(Boolean);setState[dayIdx][exIdx]=setState[dayIdx][exIdx].map(()=>!allDone);
+  try{playSetDone();}catch(e){}
+  if(!allDone)showToast('EXERCISE CLEARED',WORKOUT_DATA[dayIdx].exercises[exIdx].name+' — DONE');
+  updateGlobalProgress();renderWorkout();
+}
+function markDayComplete(){
+  const dayDone=setState[currentDay].every(ex=>ex.every(Boolean));
+  if(!dayDone){setState[currentDay]=setState[currentDay].map(ex=>ex.map(()=>true));showToast('DAY COMPLETE',WORKOUT_DATA[currentDay].name+' — FINISHED');weekDone[0]=true;document.getElementById('wk-0').classList.add('done');}
+  else{setState[currentDay]=setState[currentDay].map(ex=>ex.map(()=>false));showToast('DAY RESET','Progress cleared');}
+  stopRest2();updateGlobalProgress();renderWorkout();
+}
+function startRest(seconds){
+  stopRest2();restCount++;document.getElementById('gp-rest-count').textContent=restCount;
+  restTimeLeft=seconds;const timerEl=document.getElementById('rest-timer');const cdEl=document.getElementById('rest-cd');const fillEl=document.getElementById('rest-bar-fill');
+  timerEl.classList.add('show');cdEl.textContent=restTimeLeft;fillEl.style.transition='none';fillEl.style.width='100%';fillEl.getBoundingClientRect();fillEl.style.transition=`width ${seconds}s linear`;fillEl.style.width='0%';
+  restInterval2=setInterval(()=>{restTimeLeft--;cdEl.textContent=restTimeLeft;try{playTick();}catch(e){}if(restTimeLeft<=0){stopRest2();showToast('REST OVER','TIME TO PUSH — GO!');}},1000);
+}
+function stopRest2(){if(restInterval2)clearInterval(restInterval2);restInterval2=null;document.getElementById('rest-timer').classList.remove('show');}
+function skipRest(){stopRest2();showToast('REST SKIPPED','YOU CANNOT BE STOPPED');}
+initState();renderWorkout();
+renderDevilFruits();
+
+/* ======================================================
+   ARCADE ENGINE
+   ====================================================== */
+const canvas=document.getElementById('game-canvas');
+const ctx=canvas.getContext('2d');
+let CW=600,CH=360;
+let activeGame='flappy';let gameLoop=null;let score=0;let bestScores={flappy:0,snake:0,pong:0};let gameState='idle';
+const C={bg:'#04020a',blue:'#00d4ff',purple:'#9b30ff',red:'#ff2244',green:'#00ff88',white:'#ffffff',panel:'#08040f'};
+
+function resizeCanvas(){const wrap=document.querySelector('.modal-canvas-wrap');if(!wrap)return;const maxW=Math.min(600,window.innerWidth-32);canvas.style.width=maxW+'px';canvas.style.height=(maxW*CH/CW)+'px';}
+window.addEventListener('resize',resizeCanvas);
+
+function openGame(type){activeGame=type;resizeCanvas();document.getElementById('game-modal').classList.add('open');document.body.style.overflow='hidden';switchGame(type);showToast('ARENA UNLOCKED',type==='flappy'?'FLAPPY SORCERER':type==='snake'?'CURSED SNAKE':'INFINITY PONG');}
+function closeGame(){stopLoop();document.getElementById('game-modal').classList.remove('open');document.body.style.overflow='';gameState='idle';}
+function switchGame(type){
+  activeGame=type;
+  ['flappy','snake','pong'].forEach(g=>document.getElementById('sel-'+g)?.classList.toggle('sel',g===type));
+  const titles={flappy:'FLAPPY SORCERER',snake:'CURSED SNAKE',pong:'INFINITY PONG'};
+  const hints={flappy:'PRESS SPACE / TAP TO FLAP',snake:'ARROW KEYS / WASD — SWIPE ON MOBILE',pong:'MOVE MOUSE / DRAG TO CONTROL PADDLE'};
+  document.getElementById('modal-title').textContent=titles[type];document.getElementById('modal-hint').textContent=hints[type];
+  score=0;updateScoreDisplay();stopLoop();
+  if(type==='flappy')initFlappy();else if(type==='snake')initSnake();else initPong();
+}
+function restartGame(){score=0;updateScoreDisplay();stopLoop();if(activeGame==='flappy')initFlappy();else if(activeGame==='snake')initSnake();else initPong();}
+function stopLoop(){if(gameLoop){cancelAnimationFrame(gameLoop);gameLoop=null;}if(snakeInterval){clearInterval(snakeInterval);snakeInterval=null;}gameState='idle';}
+function updateScoreDisplay(){document.getElementById('modal-score').textContent=score;if(score>bestScores[activeGame])bestScores[activeGame]=score;document.getElementById('modal-best').textContent=bestScores[activeGame];}
+function drawRect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h);}
+function drawText(txt,x,y,size,color,align){ctx.save();ctx.font=`${size}px 'Bebas Neue',sans-serif`;ctx.fillStyle=color;ctx.textAlign=align||'left';ctx.fillText(txt,x,y);ctx.restore();}
+function drawGrid(){ctx.strokeStyle='rgba(0,212,255,0.04)';ctx.lineWidth=1;for(let x=0;x<CW;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CH);ctx.stroke();}for(let y=0;y<CH;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CW,y);ctx.stroke();}}
+function drawScanlines(){for(let y=0;y<CH;y+=3){ctx.fillStyle='rgba(0,0,0,0.07)';ctx.fillRect(0,y,CW,1);}}
+
+/* FLAPPY */
+let bird,pipes,flappyTick,flappyStarted,flappyDead,fpArr;
+function initFlappy(){gameState='idle';bird={x:90,y:CH/2,vy:0,r:14,rot:0};pipes=[];flappyTick=0;flappyStarted=false;flappyDead=false;fpArr=[];gameLoop=requestAnimationFrame(flappyFrame);}
+function flap(){if(flappyDead){restartGame();return;}if(!flappyStarted){flappyStarted=true;gameState='playing';}bird.vy=-7.5;try{playFlap();}catch(e){}for(let i=0;i<6;i++)fpArr.push({x:bird.x,y:bird.y,vx:(-2+Math.random()*-2),vy:(-2+Math.random()*4),life:1,col:Math.random()<0.5?C.blue:C.purple});}
+function flappyFrame(){gameLoop=requestAnimationFrame(flappyFrame);ctx.fillStyle=C.bg;ctx.fillRect(0,0,CW,CH);drawGrid();if(!flappyStarted&&!flappyDead){bird.y=CH/2+Math.sin(Date.now()/400)*10;drawFlappyIdle();drawBird();return;}if(flappyDead){drawFlappyDead();return;}flappyTick++;bird.vy+=0.38;bird.y+=bird.vy;bird.rot=Math.max(-25,Math.min(70,bird.vy*4));if(flappyTick%90===0){const gap=120,top=60+Math.random()*(CH-gap-100);pipes.push({x:CW,top,bot:top+gap,scored:false});}const spd=2.5+score*0.08;pipes.forEach(p=>p.x-=spd);pipes=pipes.filter(p=>p.x>-70);pipes.forEach(p=>{if(!p.scored&&p.x+50<bird.x){p.scored=true;score++;updateScoreDisplay();try{playScore();}catch(e){}}ctx.fillStyle=C.purple;ctx.shadowBlur=10;ctx.shadowColor=C.purple;ctx.fillRect(p.x,0,50,p.top);ctx.fillRect(p.x,p.bot,50,CH-p.bot);ctx.shadowBlur=0;ctx.fillStyle='rgba(155,48,255,0.3)';ctx.fillRect(p.x-4,p.top-18,58,18);ctx.fillRect(p.x-4,p.bot,58,18);});fpArr=fpArr.filter(p=>p.life>0);fpArr.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.06;ctx.fillStyle=p.col;ctx.globalAlpha=p.life;ctx.fillRect(p.x-2,p.y-2,4,4);ctx.globalAlpha=1;});ctx.strokeStyle=C.blue;ctx.shadowBlur=5;ctx.shadowColor=C.blue;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,CH-2);ctx.lineTo(CW,CH-2);ctx.stroke();ctx.shadowBlur=0;drawBird();drawScanlines();drawText('SCORE',10,24,15,'rgba(255,255,255,0.28)');drawText(score,10,52,34,C.blue,'left');if(bird.y+bird.r>CH-2||bird.y-bird.r<0)killFlappy();pipes.forEach(p=>{if(bird.x+bird.r>p.x+4&&bird.x-bird.r<p.x+46){if(bird.y-bird.r<p.top||bird.y+bird.r>p.bot)killFlappy();}});}
+function drawBird(){ctx.save();ctx.translate(bird.x,bird.y);ctx.rotate(bird.rot*Math.PI/180);ctx.shadowBlur=18;ctx.shadowColor=C.blue;ctx.fillStyle=C.blue;ctx.beginPath();ctx.ellipse(0,0,bird.r,bird.r*0.8,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#000';ctx.beginPath();ctx.arc(5,-3,3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(6,-3,2,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,180,255,0.7)';ctx.beginPath();ctx.ellipse(-4,4,7,4,-0.4,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(0,0,0,0.6)';ctx.font='8px Noto Sans JP,sans-serif';ctx.textAlign='center';ctx.fillText('六',0,2);ctx.restore();}
+function drawFlappyIdle(){drawText('FLAPPY SORCERER',CW/2,CH/2-55,32,C.blue,'center');drawText('TAP / CLICK / SPACE TO START',CW/2,CH/2+74,18,'rgba(255,255,255,0.45)','center');drawText('六眼無下限',CW/2,CH/2+100,15,'rgba(0,212,255,0.28)','center');}
+function killFlappy(){if(flappyDead)return;flappyDead=true;gameState='dead';try{playDie();}catch(e){}updateScoreDisplay();}
+function drawFlappyDead(){ctx.fillStyle=C.bg;ctx.fillRect(0,0,CW,CH);drawGrid();if(Math.floor(Date.now()/200)%2===0){ctx.fillStyle='rgba(255,34,68,0.07)';ctx.fillRect(0,0,CW,CH);}drawText('INFINITY BROKEN',CW/2,CH/2-55,38,C.red,'center');drawText('SCORE: '+score,CW/2,CH/2-8,28,C.blue,'center');drawText('BEST: '+bestScores[activeGame],CW/2,CH/2+28,20,'rgba(155,48,255,0.8)','center');drawText('TAP / SPACE TO RETRY',CW/2,CH/2+74,17,'rgba(255,255,255,0.45)','center');drawScanlines();}
+
+/* SNAKE */
+let snake,food,snakeDir,snakeNextDir,snakeDead,snakeInterval,snakeStarted;
+const GRID=20,COLS=Math.floor(CW/GRID),ROWS=Math.floor(CH/GRID);
+function initSnake(){gameState='idle';snakeStarted=false;snakeDead=false;snakeDir={x:1,y:0};snakeNextDir={x:1,y:0};snake=[{x:10,y:9},{x:9,y:9},{x:8,y:9}];placeFood();if(snakeInterval)clearInterval(snakeInterval);snakeInterval=setInterval(snakeStep,120);if(gameLoop)cancelAnimationFrame(gameLoop);gameLoop=requestAnimationFrame(snakeFrame);}
+function placeFood(){let fx,fy,ok;do{fx=1+Math.floor(Math.random()*(COLS-2));fy=1+Math.floor(Math.random()*(ROWS-2));ok=!snake.some(s=>s.x===fx&&s.y===fy);}while(!ok);food={x:fx,y:fy,pulse:0};}
+function snakeStep(){if(snakeDead||!snakeStarted)return;snakeDir={...snakeNextDir};const head={x:snake[0].x+snakeDir.x,y:snake[0].y+snakeDir.y};if(head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS){killSnake();return;}if(snake.some(s=>s.x===head.x&&s.y===head.y)){killSnake();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score++;updateScoreDisplay();try{playEat();}catch(e){}placeFood();}else snake.pop();}
+function killSnake(){if(snakeDead)return;snakeDead=true;gameState='dead';clearInterval(snakeInterval);snakeInterval=null;try{playDie();}catch(e){}updateScoreDisplay();}
+function snakeFrame(){gameLoop=requestAnimationFrame(snakeFrame);ctx.fillStyle=C.bg;ctx.fillRect(0,0,CW,CH);drawGrid();food.pulse=(food.pulse||0)+0.1;ctx.strokeStyle=C.blue;ctx.shadowBlur=6;ctx.shadowColor=C.blue;ctx.lineWidth=2;ctx.strokeRect(0,0,CW,CH);ctx.shadowBlur=0;const fx=food.x*GRID+GRID/2,fy=food.y*GRID+GRID/2;ctx.fillStyle=C.red;ctx.shadowBlur=8+Math.sin(food.pulse)*4;ctx.shadowColor=C.red;ctx.beginPath();ctx.arc(fx,fy,6,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.font='7px Noto Sans JP,sans-serif';ctx.fillStyle='rgba(255,255,255,0.5)';ctx.textAlign='center';ctx.fillText('呪',fx,fy+3);snake.forEach((seg,i)=>{const isHead=i===0;const t=i/snake.length;const col=isHead?C.blue:`rgba(0,${Math.floor(212*(1-t*0.5))},${Math.floor(255*(1-t*0.3))},${1-t*0.5})`;ctx.fillStyle=col;ctx.shadowBlur=isHead?14:3;ctx.shadowColor=isHead?C.blue:C.purple;const pad=isHead?1:2;ctx.beginPath();ctx.roundRect(seg.x*GRID+pad,seg.y*GRID+pad,GRID-pad*2,GRID-pad*2,isHead?3:2);ctx.fill();ctx.shadowBlur=0;});if(!snakeStarted&&!snakeDead){drawText('CURSED SNAKE',CW/2,CH/2-55,34,C.green,'center');drawText('ARROW KEYS / WASD TO MOVE',CW/2,CH/2+55,17,'rgba(255,255,255,0.45)','center');drawText('EAT 呪 TO GROW',CW/2,CH/2+80,15,'rgba(255,34,68,0.7)','center');}if(snakeDead){ctx.fillStyle='rgba(0,0,0,0.68)';ctx.fillRect(0,0,CW,CH);drawText('CURSED ENERGY DEPLETED',CW/2,CH/2-55,30,C.red,'center');drawText('SCORE: '+score,CW/2,CH/2-8,26,C.blue,'center');drawText('BEST: '+bestScores[activeGame],CW/2,CH/2+26,18,'rgba(155,48,255,0.8)','center');drawText('TAP / SPACE TO RETRY',CW/2,CH/2+70,16,'rgba(255,255,255,0.45)','center');}drawText('SCORE',10,22,13,'rgba(255,255,255,0.28)');drawText(score,10,44,32,C.blue,'left');drawText('LEN: '+snake.length,CW-10,22,13,'rgba(255,255,255,0.28)','right');drawScanlines();}
+
+/* PONG */
+let pong={};
+const PADDLE_H=70,PADDLE_W=10,BALL_R=7;
+function initPong(){gameState='idle';pong={ball:{x:CW/2,y:CH/2,vx:3.5*(Math.random()<0.5?1:-1),vy:2.5*(Math.random()<0.5?1:-1)},player:{y:CH/2-PADDLE_H/2,score:0},ai:{y:CH/2-PADDLE_H/2,score:0},started:false,dead:false,particles:[]};if(gameLoop)cancelAnimationFrame(gameLoop);gameLoop=requestAnimationFrame(pongFrame);}
+canvas.addEventListener('mousemove',e=>{if(activeGame!=='pong')return;const rect=canvas.getBoundingClientRect();const scaleY=CH/(rect.height||CH);pong.player.y=(e.clientY-rect.top)*scaleY-PADDLE_H/2;});
+canvas.addEventListener('touchmove',e=>{if(activeGame!=='pong')return;e.preventDefault();const rect=canvas.getBoundingClientRect();const scaleY=CH/(rect.height||CH);pong.player.y=(e.touches[0].clientY-rect.top)*scaleY-PADDLE_H/2;},{passive:false});
+function pongFrame(){gameLoop=requestAnimationFrame(pongFrame);ctx.fillStyle=C.bg;ctx.fillRect(0,0,CW,CH);drawGrid();if(!pong.started){drawPongBoard();drawText('INFINITY PONG',CW/2,CH/2-55,32,C.blue,'center');drawText('MOVE MOUSE / DRAG PADDLE',CW/2,CH/2+60,17,'rgba(255,255,255,0.45)','center');drawText('CLICK / TAP / SPACE TO START',CW/2,CH/2+85,15,'rgba(255,255,255,0.3)','center');drawScanlines();return;}if(pong.dead){drawPongBoard();ctx.fillStyle='rgba(0,0,0,0.65)';ctx.fillRect(0,0,CW,CH);const winner=pong.ai.score>=7?'AI WINS':'YOU WIN';const col=pong.ai.score>=7?C.red:C.green;drawText(winner,CW/2,CH/2-50,42,col,'center');drawText('YOU '+pong.player.score+' — '+pong.ai.score+' AI',CW/2,CH/2+10,28,C.blue,'center');drawText('TAP / SPACE TO PLAY AGAIN',CW/2,CH/2+66,17,'rgba(255,255,255,0.45)','center');drawScanlines();return;}const aiSpeed=2.8+(score*0.05);const aiCenter=pong.ai.y+PADDLE_H/2;if(aiCenter<pong.ball.y-10)pong.ai.y+=aiSpeed;else if(aiCenter>pong.ball.y+10)pong.ai.y-=aiSpeed;pong.player.y=Math.max(0,Math.min(CH-PADDLE_H,pong.player.y));pong.ai.y=Math.max(0,Math.min(CH-PADDLE_H,pong.ai.y));pong.ball.x+=pong.ball.vx;pong.ball.y+=pong.ball.vy;if(pong.ball.y-BALL_R<0){pong.ball.y=BALL_R;pong.ball.vy*=-1;try{playPongHit();}catch(e){}}if(pong.ball.y+BALL_R>CH){pong.ball.y=CH-BALL_R;pong.ball.vy*=-1;try{playPongHit();}catch(e){}}const px=CW-PADDLE_W-10;if(pong.ball.vx>0&&pong.ball.x+BALL_R>=px&&pong.ball.x-BALL_R<px+PADDLE_W){if(pong.ball.y>=pong.player.y&&pong.ball.y<=pong.player.y+PADDLE_H){pong.ball.vx*=-1.05;const rel=(pong.ball.y-(pong.player.y+PADDLE_H/2))/(PADDLE_H/2);pong.ball.vy=rel*6;pong.ball.x=px-BALL_R-1;try{playPongHit();}catch(e){}addPP(pong.ball.x,pong.ball.y,C.blue);}}const ax=10;if(pong.ball.vx<0&&pong.ball.x-BALL_R<=ax+PADDLE_W&&pong.ball.x+BALL_R>ax){if(pong.ball.y>=pong.ai.y&&pong.ball.y<=pong.ai.y+PADDLE_H){pong.ball.vx*=-1.05;const rel=(pong.ball.y-(pong.ai.y+PADDLE_H/2))/(PADDLE_H/2);pong.ball.vy=rel*6;pong.ball.x=ax+PADDLE_W+BALL_R+1;try{playPongHit();}catch(e){}addPP(pong.ball.x,pong.ball.y,C.purple);}}if(pong.ball.x-BALL_R<0){pong.player.score++;score=pong.player.score;updateScoreDisplay();try{playScore();}catch(e){}resetBall(1);if(pong.player.score>=7){pong.dead=true;gameState='dead';}}if(pong.ball.x+BALL_R>CW){pong.ai.score++;try{playPongScore();}catch(e){}resetBall(-1);if(pong.ai.score>=7){pong.dead=true;gameState='dead';}}const spd=Math.sqrt(pong.ball.vx**2+pong.ball.vy**2);if(spd>14){pong.ball.vx*=0.95;pong.ball.vy*=0.95;}pong.particles=pong.particles.filter(p=>p.life>0);pong.particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.04;ctx.fillStyle=p.col;ctx.globalAlpha=p.life;ctx.fillRect(p.x-2,p.y-2,4,4);ctx.globalAlpha=1;});drawPongBoard();drawScanlines();}
+function addPP(x,y,col){for(let i=0;i<8;i++)pong.particles.push({x,y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:1,col});}
+function resetBall(dir){pong.ball={x:CW/2,y:CH/2,vx:3.5*dir*(0.9+Math.random()*0.2),vy:(Math.random()-0.5)*4};}
+function drawPongBoard(){ctx.strokeStyle='rgba(0,212,255,0.12)';ctx.setLineDash([10,10]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(CW/2,0);ctx.lineTo(CW/2,CH);ctx.stroke();ctx.setLineDash([]);drawText(pong.player.score,CW*3/4,52,46,C.blue,'center');drawText(pong.ai.score,CW/4,52,46,C.purple,'center');drawText('YOU',CW*3/4,20,12,'rgba(255,255,255,0.3)','center');drawText('AI',CW/4,20,12,'rgba(255,255,255,0.3)','center');ctx.fillStyle=C.purple;ctx.shadowBlur=10;ctx.shadowColor=C.purple;ctx.fillRect(10,pong.ai.y,PADDLE_W,PADDLE_H);ctx.shadowBlur=0;ctx.fillStyle=C.blue;ctx.shadowBlur=12;ctx.shadowColor=C.blue;ctx.fillRect(CW-PADDLE_W-10,pong.player.y,PADDLE_W,PADDLE_H);ctx.shadowBlur=0;if(!pong.dead){ctx.fillStyle=C.white;ctx.shadowBlur=14;ctx.shadowColor=C.blue;ctx.beginPath();ctx.arc(pong.ball.x,pong.ball.y,BALL_R,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='rgba(0,212,255,0.3)';ctx.beginPath();ctx.arc(pong.ball.x-pong.ball.vx*2,pong.ball.y-pong.ball.vy*2,BALL_R*0.6,0,Math.PI*2);ctx.fill();}}
+
+/* INPUT */
+function handleGameInput(e){
+  const modal=document.getElementById('game-modal');if(!modal.classList.contains('open'))return;
+  if(activeGame==='flappy'){if(e.type==='keydown'&&e.code==='Space'){e.preventDefault();flap();}if(e.type==='click'&&e.target===canvas)flap();}
+  if(activeGame==='snake'){const keys={'ArrowUp':{x:0,y:-1},'ArrowDown':{x:0,y:1},'ArrowLeft':{x:-1,y:0},'ArrowRight':{x:1,y:0},'KeyW':{x:0,y:-1},'KeyS':{x:0,y:1},'KeyA':{x:-1,y:0},'KeyD':{x:1,y:0}};if(e.type==='keydown'&&keys[e.code]){e.preventDefault();const nd=keys[e.code];if(nd.x+snakeDir.x!==0||nd.y+snakeDir.y!==0){snakeNextDir=nd;if(!snakeStarted){snakeStarted=true;gameState='playing';}}}if(e.type==='click'&&snakeDead)restartGame();}
+  if(activeGame==='pong'){if(e.type==='keydown'&&e.code==='Space'){e.preventDefault();if(!pong.started){pong.started=true;gameState='playing';}else if(pong.dead)restartGame();}if(e.type==='click'&&e.target===canvas){if(!pong.started){pong.started=true;gameState='playing';}else if(pong.dead)restartGame();}}
+}
+document.addEventListener('keydown',handleGameInput);
+canvas.addEventListener('click',handleGameInput);
+document.addEventListener('keydown',e=>{if(e.code==='Escape'){if(document.getElementById('df-modal').classList.contains('open')){closeDFModal();return;}const m=document.getElementById('game-modal');if(m.classList.contains('open'))closeGame();}});
+canvas.addEventListener('touchend',e=>{const modal=document.getElementById('game-modal');if(!modal.classList.contains('open'))return;if(activeGame==='flappy'){flap();}else if(activeGame==='snake'&&snakeDead){restartGame();}else if(activeGame==='pong'){if(!pong.started){pong.started=true;gameState='playing';}else if(pong.dead)restartGame();}});
+let touchStartX=0,touchStartY=0;
+canvas.addEventListener('touchstart',e=>{if(activeGame==='snake'){touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;}},{passive:true});
+canvas.addEventListener('touchend',e=>{if(activeGame!=='snake')return;const dx=e.changedTouches[0].clientX-touchStartX;const dy=e.changedTouches[0].clientY-touchStartY;const ab=Math.abs;let nd=null;if(ab(dx)>ab(dy)&&ab(dx)>20){nd=dx>0?{x:1,y:0}:{x:-1,y:0};}else if(ab(dy)>ab(dx)&&ab(dy)>20){nd=dy>0?{x:0,y:1}:{x:0,y:-1};}if(nd&&(nd.x+snakeDir.x!==0||nd.y+snakeDir.y!==0)){snakeNextDir=nd;if(!snakeStarted){snakeStarted=true;gameState='playing';}}},{passive:true});
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.beginPath();this.moveTo(x+r,y);this.lineTo(x+w-r,y);this.quadraticCurveTo(x+w,y,x+w,y+r);this.lineTo(x+w,y+h-r);this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);this.lineTo(x+r,y+h);this.quadraticCurveTo(x,y+h,x,y+h-r);this.lineTo(x,y+r);this.quadraticCurveTo(x,y,x+r,y);this.closePath();};}
+</script>
+</body>
+</html>
